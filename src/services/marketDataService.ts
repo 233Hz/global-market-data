@@ -293,16 +293,84 @@ const BASELINE_DATA: Record<string, MarketSection[]> = {
   ]
 }
 
-// Storage key bumped to v7 to invalidate any stale legacy data in client browsers
-const STORAGE_KEY = 'global_market_data_cache_v7'
-const LAST_FETCH_KEY = 'global_market_data_last_fetch_v7'
+// Storage key bumped to v8 for GCC API integration
+const STORAGE_KEY = 'global_market_data_cache_v8'
+const LAST_FETCH_KEY = 'global_market_data_last_fetch_v8'
 
-// All unique symbols to query from Tencent batch API
+// GCC Backend base URL from https://github.com/MaHuisir/GCC
+const GCC_BASE_URL = 'https://mh-ai.cn/gcc'
+
+// All unique symbols to query from Tencent batch API (fallback & supplementary)
 const TENCENT_SYMBOLS = Array.from(new Set(Object.values(SYMBOL_MAP)))
 
 interface ParsedQuote {
   price?: string
   changePercent?: number
+}
+
+export interface GccMarketStatus {
+  status: string
+  isTrading: boolean
+  label: string
+  fullLabel: string
+  nextOpenLabel?: string
+}
+
+function parseGccPercent(val?: string | number): number | undefined {
+  if (typeof val === 'number') return val
+  if (!val) return undefined
+  const cleaned = val.replace('%', '').replace('+', '').trim()
+  const num = parseFloat(cleaned)
+  return isNaN(num) ? undefined : num
+}
+
+function formatGccPrice(p?: string | number): string | undefined {
+  if (p === undefined || p === null || p === '' || p === '--') return undefined
+  const num = typeof p === 'number' ? p : parseFloat(p)
+  if (isNaN(num)) return undefined
+  return num < 10 && num > 0 ? num.toFixed(3) : num.toFixed(2)
+}
+
+/**
+ * Fetch market data from GCC (魔方市场) backend API
+ * Reference: https://github.com/MaHuisir/GCC / API-CONTRACT.md
+ */
+async function fetchGccData(): Promise<{
+  quotes?: any
+  metals?: any
+  indices?: any
+  forex?: any
+  marketStatus: Record<string, GccMarketStatus>
+} | null> {
+  try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 4000)
+
+    const [quotesRes, metalsRes, indicesRes, forexRes] = await Promise.allSettled([
+      fetch(`${GCC_BASE_URL}/api/quotes`, { signal: controller.signal }).then(r => r.json()),
+      fetch(`${GCC_BASE_URL}/api/metals`, { signal: controller.signal }).then(r => r.json()),
+      fetch(`${GCC_BASE_URL}/api/indices`, { signal: controller.signal }).then(r => r.json()),
+      fetch(`${GCC_BASE_URL}/api/forex`, { signal: controller.signal }).then(r => r.json())
+    ])
+    clearTimeout(timeoutId)
+
+    const quotes = quotesRes.status === 'fulfilled' && quotesRes.value?.success ? quotesRes.value.data : null
+    const metals = metalsRes.status === 'fulfilled' && metalsRes.value?.success ? metalsRes.value.data : null
+    const indices = indicesRes.status === 'fulfilled' && indicesRes.value?.success ? indicesRes.value.data : null
+    const forex = forexRes.status === 'fulfilled' && forexRes.value?.success ? forexRes.value.data : null
+
+    const marketStatus: Record<string, GccMarketStatus> = {
+      ...(quotes?.marketStatus || {}),
+      ...(metals?.marketStatus || {}),
+      ...(indices?.marketStatus || {}),
+      ...(forex?.marketStatus || {})
+    }
+
+    return { quotes, metals, indices, forex, marketStatus }
+  } catch (err) {
+    console.warn('GCC API fetch skipped or timed out:', err)
+    return null
+  }
 }
 
 // Fetch batch quotes from Tencent Finance API (Native CORS Access-Control-Allow-Origin: *)
@@ -412,58 +480,255 @@ export class MarketDataService {
   }
 
   /**
-   * Fetch updated market data from live sources and update local store
+   * Fetch updated market data from GCC API with Tencent & Forex fallback
    */
   static async refreshAllData(): Promise<Record<string, MarketSection[]>> {
     const currentData: Record<string, MarketSection[]> = this.loadData()
 
-    // 1. Concurrent fetch: Real batch quotes & Forex rates
-    const [quotes, forexRates] = await Promise.all([
+    // Concurrent fetch: 1. GCC API, 2. Tencent batch quotes, 3. Open Forex API
+    const [gccData, tencentQuotes, forexRates] = await Promise.all([
+      fetchGccData(),
       fetchTencentBatchQuotes(),
       fetchRealForex()
     ])
 
-    // 2. Apply real Forex rates
+    // --- 1. Apply GCC API Data ---
+    if (gccData) {
+      const { quotes, metals, indices, forex, marketStatus } = gccData
+
+      // 1.1 Global Macro from GCC quotes & metals
+      if (currentData.global) {
+        const macroSection = currentData.global.find(s => s.id === 'global-macro')
+        if (macroSection) {
+          // Update card badge with real market status
+          if (marketStatus.us) {
+            macroSection.badge = `美股 · ${marketStatus.us.label}`
+            macroSection.badgeColor = marketStatus.us.isTrading ? 'live' : 'closed'
+          } else {
+            macroSection.badge = '全球 · 已更新'
+            macroSection.badgeColor = 'live'
+          }
+
+          const ge = quotes?.globalEconomic || []
+          const brentItem = ge.find((x: any) => x.code === 'hf_OIL' || x.name.includes('原油'))
+          const vixItem = ge.find((x: any) => x.code === 'gb_vxx' || x.subtitle === 'VIX' || x.name.includes('恐慌'))
+          const dxyItem = ge.find((x: any) => x.code === 'DINIW' || x.name.includes('美元'))
+          const us10yItem = ge.find((x: any) => x.code === 'gb_tlt' || x.name.includes('美债'))
+          const goldItem = metals?.metals?.find((x: any) => x.code === 'hf_GC' || x.name === '黄金')
+          const silverItem = metals?.metals?.find((x: any) => x.code === 'hf_SI' || x.name === '白银')
+          const copperItem = metals?.metals?.find((x: any) => x.code === 'hf_CAD' || x.name === '铜')
+
+          macroSection.items.forEach(item => {
+            if (item.id === 'brent' && brentItem) {
+              item.price = formatGccPrice(brentItem.price) || item.price
+              item.changePercent = parseGccPercent(brentItem.changePercent) ?? item.changePercent
+            } else if (item.id === 'vix' && vixItem) {
+              item.price = formatGccPrice(vixItem.price) || item.price
+              item.changePercent = parseGccPercent(vixItem.changePercent) ?? item.changePercent
+            } else if (item.id === 'dxy' && dxyItem) {
+              item.price = formatGccPrice(dxyItem.price) || item.price
+              item.changePercent = parseGccPercent(dxyItem.changePercent) ?? item.changePercent
+            } else if (item.id === 'us10y' && us10yItem) {
+              item.price = formatGccPrice(us10yItem.price) || item.price
+              item.changePercent = parseGccPercent(us10yItem.changePercent) ?? item.changePercent
+            } else if (item.id === 'gold' && goldItem) {
+              item.price = formatGccPrice(goldItem.price) || item.price
+              item.changePercent = parseGccPercent(goldItem.changePercent) ?? item.changePercent
+            } else if (item.id === 'silver' && silverItem) {
+              item.price = formatGccPrice(silverItem.price) || item.price
+              item.changePercent = parseGccPercent(silverItem.changePercent) ?? item.changePercent
+            } else if (item.id === 'copper' && copperItem) {
+              item.price = formatGccPrice(copperItem.price) || item.price
+              item.changePercent = parseGccPercent(copperItem.changePercent) ?? item.changePercent
+            }
+          })
+        }
+
+        // 1.2 Global Industry from GCC usSectors
+        const industrySection = currentData.global.find(s => s.id === 'global-industry')
+        if (industrySection) {
+          if (marketStatus.us) {
+            industrySection.badge = marketStatus.us.fullLabel || `美股 · ${marketStatus.us.label}`
+            industrySection.badgeColor = marketStatus.us.isTrading ? 'live' : 'closed'
+          } else {
+            industrySection.badge = '美股 · 已更新'
+            industrySection.badgeColor = 'live'
+          }
+
+          const usSectors: any[] = quotes?.usSectors || []
+          const nameMap: Record<string, string> = {
+            'semiconductor': '半导体',
+            'memory': '存储',
+            'robotics': '机器人',
+            'autopilot': '自动驾驶',
+            'cloud': '云计算',
+            'defense': '军工',
+            'nuclear': '核电',
+            'grid': '电网',
+            'solar': '光伏',
+            'battery': '锂电池',
+            'oil-sector': '石油',
+            'copper-sector': '铜',
+            'gold-sector': '黄金',
+            'banking': '银行',
+            'biotech': '生物医药',
+            'consumer': '消费',
+            'rare-earth': '稀土'
+          }
+
+          industrySection.items.forEach(item => {
+            const targetKeyword = nameMap[item.id]
+            if (targetKeyword) {
+              const matched = usSectors.find((s: any) => s.name && s.name.includes(targetKeyword))
+              if (matched) {
+                const p = parseGccPercent(matched.changePercent)
+                if (p !== undefined) item.changePercent = p
+              }
+            }
+          })
+        }
+      }
+
+      // 1.3 Metals Tab from GCC metals
+      if (currentData.metals && metals?.metals) {
+        const metalsList: any[] = metals.metals
+
+        const goldSilverSection = currentData.metals.find(s => s.id === 'gold-silver')
+        if (goldSilverSection) {
+          if (marketStatus.metals) {
+            goldSilverSection.badge = `有色 · ${marketStatus.metals.label}`
+            goldSilverSection.badgeColor = marketStatus.metals.isTrading ? 'live' : 'closed'
+          } else {
+            goldSilverSection.badge = '有色 · 已更新'
+            goldSilverSection.badgeColor = 'live'
+          }
+
+          goldSilverSection.items.forEach(item => {
+            if (item.id === 'm-gold') {
+              const m = metalsList.find((x: any) => x.code === 'hf_GC' || x.name === '黄金')
+              if (m) item.changePercent = parseGccPercent(m.changePercent) ?? item.changePercent
+            } else if (item.id === 'm-silver') {
+              const m = metalsList.find((x: any) => x.code === 'hf_SI' || x.name === '白银')
+              if (m) item.changePercent = parseGccPercent(m.changePercent) ?? item.changePercent
+            }
+          })
+        }
+
+        const industrialSection = currentData.metals.find(s => s.id === 'industrial-metals')
+        if (industrialSection) {
+          industrialSection.items.forEach(item => {
+            const codeMap: Record<string, string> = {
+              'm-copper': 'hf_CAD',
+              'm-aluminum': 'hf_AHD',
+              'm-zinc': 'hf_ZSD',
+              'm-nickel': 'hf_NID',
+              'm-tin': 'hf_SND'
+            }
+            const targetCode = codeMap[item.id]
+            if (targetCode) {
+              const m = metalsList.find((x: any) => x.code === targetCode)
+              if (m) item.changePercent = parseGccPercent(m.changePercent) ?? item.changePercent
+            }
+          })
+        }
+      }
+
+      // 1.4 Asia Indices & Forex from GCC
+      if (currentData.asia) {
+        const indicesList: any[] = indices?.indices || []
+
+        const krComp = currentData.asia.find(s => s.id === 'kr-composite')
+        if (krComp) {
+          if (marketStatus.kr) {
+            krComp.badge = `日韩 · ${marketStatus.kr.label}`
+            krComp.badgeColor = marketStatus.kr.isTrading ? 'live' : 'closed'
+          }
+          const kospi = indicesList.find((x: any) => x.code === 'int_kospi' || x.name.includes('韩国'))
+          if (kospi) {
+            const item = krComp.items.find(i => i.id === 'kospi')
+            if (item) item.changePercent = parseGccPercent(kospi.changePercent) ?? item.changePercent
+          }
+        }
+
+        const jpComp = currentData.asia.find(s => s.id === 'jp-composite')
+        if (jpComp) {
+          const nikkei = indicesList.find((x: any) => x.code === 'int_nikkei' || x.name.includes('日经'))
+          const topix = indicesList.find((x: any) => x.code === 'int_topix' || x.name.includes('东证'))
+          if (nikkei) {
+            const item = jpComp.items.find(i => i.id === 'nikkei225')
+            if (item) item.changePercent = parseGccPercent(nikkei.changePercent) ?? item.changePercent
+          }
+          if (topix && !topix.unavailable) {
+            const item = jpComp.items.find(i => i.id === 'topix')
+            if (item) item.changePercent = parseGccPercent(topix.changePercent) ?? item.changePercent
+          }
+        }
+
+        // Forex from GCC
+        const forexSection = currentData.asia.find(s => s.id === 'forex')
+        if (forexSection && forex?.forex) {
+          const fxList: any[] = forex.forex
+          const usdjpy = fxList.find((x: any) => x.code === 'fx_susdjpy')
+          const jpycny = fxList.find((x: any) => x.code === 'fx_sjpycny')
+
+          forexSection.items.forEach(item => {
+            if (item.id === 'usd-jpy' && usdjpy) {
+              item.price = formatGccPrice(usdjpy.price) || item.price
+              item.changePercent = parseGccPercent(usdjpy.changePercent) ?? item.changePercent
+            } else if (item.id === 'cny-jpy' && jpycny && jpycny.price) {
+              const rate = parseFloat(jpycny.price)
+              if (rate > 0) {
+                item.price = (1 / rate).toFixed(2)
+                item.changePercent = -(parseGccPercent(jpycny.changePercent) ?? 0)
+              }
+            }
+          })
+        }
+      }
+    }
+
+    // --- 2. Apply Open Forex Rates for USD/KRW and CNY/KRW ---
     if (forexRates && currentData.asia) {
       const forexSection = currentData.asia.find(s => s.id === 'forex')
       if (forexSection) {
         forexSection.items.forEach(item => {
           if (forexRates[item.id]) {
-            item.price = forexRates[item.id]!.price
-            item.changePercent = forexRates[item.id]!.change
+            if (item.id === 'usd-krw' || item.id === 'cny-krw') {
+              item.price = forexRates[item.id]!.price
+              item.changePercent = forexRates[item.id]!.change
+            }
           }
         })
       }
     }
 
-    // 3. Map live quotes directly to every item by resilient SYMBOL_MAP
+    // --- 3. Apply Tencent batch quotes for supplementary items & fallback ---
     for (const tabKey of Object.keys(currentData)) {
       currentData[tabKey].forEach(section => {
-        // Mark section badge as live updated
-        if (section.badge) {
+        // If badge not yet updated by GCC, set default updated
+        if (section.badge && section.badge.includes('待同步')) {
           section.badge = section.badge.replace('待同步', '已更新')
           section.badgeColor = 'live'
         }
 
         section.items.forEach(item => {
           const sym = SYMBOL_MAP[item.id] || item.symbol
-          if (sym && quotes[sym]) {
-            const live = quotes[sym]
-            if (live.changePercent !== undefined) {
+          if (sym && tencentQuotes[sym]) {
+            const live = tencentQuotes[sym]
+            // If item has 0.00 changePercent (not set by GCC), apply Tencent quote
+            if (item.changePercent === 0 && live.changePercent !== undefined) {
               item.changePercent = live.changePercent
             }
 
-            // CRITICAL: Only set item.price if the item belongs to ITEMS_WITH_PRICE!
+            // For items with price that haven't been set yet
             if (ITEMS_WITH_PRICE.has(item.id)) {
-              if (live.price !== undefined) {
+              if ((!item.price || item.price === '0.00') && live.price !== undefined) {
                 item.price = live.price
               }
             } else {
-              // Ensure no price exists for pure percentage items (AI, Industry, Metals, etc.)
               delete item.price
             }
           } else {
-            // For specialized small metals or token items without direct live quotes
             if (!ITEMS_WITH_PRICE.has(item.id)) {
               delete item.price
             }
@@ -481,7 +746,7 @@ export class MarketDataService {
     localStorage.removeItem(STORAGE_KEY)
     localStorage.removeItem(LAST_FETCH_KEY)
     // Clean up all legacy keys
-    for (let i = 1; i <= 7; i++) {
+    for (let i = 1; i <= 8; i++) {
       localStorage.removeItem(`global_market_data_cache_v${i}`)
       localStorage.removeItem(`global_market_data_last_fetch_v${i}`)
     }
