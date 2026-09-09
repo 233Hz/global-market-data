@@ -150,6 +150,7 @@ export function useMarket() {
 
     let textClass = 'text-[#1a1a1a] dark:text-zinc-300'
     let badgeClass = 'bg-[#facc15] text-[#1a1a1a] border-2 border-[#1a1a1a] shadow-[1.5px_1.5px_0px_0px_rgba(26,26,26,1)]'
+    let formattedPercent = '0.00%'
     let arrow = '—'
     let sign = ''
 
@@ -160,6 +161,7 @@ export function useMarket() {
       badgeClass = isRed
         ? 'bg-[#ef4444] text-white border-2 border-[#1a1a1a] shadow-[1.5px_1.5px_0px_0px_rgba(26,26,26,1)]'
         : 'bg-[#22c55e] text-[#1a1a1a] border-2 border-[#1a1a1a] shadow-[1.5px_1.5px_0px_0px_rgba(26,26,26,1)]'
+      formattedPercent = `▲+${changePercent.toFixed(2)}%`
     } else if (isDown) {
       arrow = '▼'
       sign = ''
@@ -167,6 +169,7 @@ export function useMarket() {
       badgeClass = isGreen
         ? 'bg-[#22c55e] text-[#1a1a1a] border-2 border-[#1a1a1a] shadow-[1.5px_1.5px_0px_0px_rgba(26,26,26,1)]'
         : 'bg-[#ef4444] text-white border-2 border-[#1a1a1a] shadow-[1.5px_1.5px_0px_0px_rgba(26,26,26,1)]'
+      formattedPercent = `▼${Math.abs(changePercent).toFixed(2)}%`
     }
 
     return {
@@ -174,7 +177,7 @@ export function useMarket() {
       sign,
       textClass,
       badgeClass,
-      formattedPercent: `${arrow} ${sign}${changePercent.toFixed(2)}%`
+      formattedPercent
     }
   }
 

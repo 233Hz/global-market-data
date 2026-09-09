@@ -1,7 +1,7 @@
 <template>
-  <div class="rounded-lg border-4 border-[#1a1a1a] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] md:shadow-[6px_6px_0px_0px_rgba(26,26,26,1)] bg-[#fffef0] dark:bg-[#202024] p-3.5 md:p-5 transition-all duration-100">
+  <div class="rounded-lg border-4 border-[#1a1a1a] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] md:shadow-[6px_6px_0px_0px_rgba(26,26,26,1)] bg-[#fffef0] dark:bg-[#202024] p-3 sm:p-4 md:p-5 transition-all duration-100">
     <!-- Card Header (Manga Panel Title) -->
-    <div class="flex items-center justify-between mb-3.5">
+    <div class="flex items-center justify-between mb-3">
       <div class="flex items-center gap-2">
         <h3 class="font-black uppercase tracking-wide text-base md:text-lg text-[#1a1a1a] dark:text-white">
           {{ title }}
@@ -56,14 +56,14 @@ const props = withDefaults(
 const gridClass = computed(() => {
   switch (props.columns) {
     case 6:
-      return 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5'
+      return 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-2.5'
     case 4:
-      return 'grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3'
+      return 'grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-2.5 md:gap-3'
     case 3:
-      return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3'
+      return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-2.5 md:gap-3'
     case 2:
     default:
-      return 'grid grid-cols-2 gap-3'
+      return 'grid grid-cols-2 gap-2 sm:gap-2.5'
   }
 })
 </script>

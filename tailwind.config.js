@@ -22,7 +22,7 @@ export default {
         '3': '3px',
       },
       fontFamily: {
-        sans: ['Impact', 'Arial Black', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        sans: ['Inter', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'SimHei', 'Impact', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
         mono: ['SF Mono', 'Menlo', 'Monaco', 'Courier New', 'monospace'],
       },
       borderRadius: {
