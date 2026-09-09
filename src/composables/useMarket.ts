@@ -16,7 +16,20 @@ const defaultSettings: UserSettings = {
 const activeTab = ref<TabKey>('global')
 const marketData = ref<Record<string, MarketSection[]>>(MarketDataService.loadData())
 const isRefreshing = ref(false)
-const hasUpdatedOnce = ref(false)
+const tabLoading = reactive<Record<TabKey, boolean>>({
+  global: false,
+  asia: false,
+  metals: false,
+  china: false,
+  settings: false
+})
+const tabFetchedOnce = reactive<Record<TabKey, boolean>>({
+  global: false,
+  asia: false,
+  metals: false,
+  china: false,
+  settings: true
+})
 const lastUpdatedTime = ref<Date>(new Date())
 const countdown = ref(60)
 
@@ -49,33 +62,46 @@ function applyTheme(t: 'dark' | 'light') {
 }
 
 // SINGLETON Timers at Module Scope - strictly one timer instance across entire app
-let timerId: any = null
 let countdownTimerId: any = null
 
-export async function refreshData() {
+/**
+ * 按需仅刷新指定 Tab 的接口数据（杜绝一次性全量请求）
+ */
+export async function refreshTabData(targetTab?: TabKey) {
+  const tab = targetTab || activeTab.value
+  if (tab === 'settings') return
   if (isRefreshing.value) return
+
   isRefreshing.value = true
+  tabLoading[tab] = true
+
   try {
-    const updated = await MarketDataService.refreshAllData()
-    marketData.value = updated
+    const sections = await MarketDataService.refreshTabData(tab)
+    if (sections && sections.length > 0) {
+      marketData.value = {
+        ...marketData.value,
+        [tab]: sections
+      }
+      MarketDataService.saveData(marketData.value)
+    }
     lastUpdatedTime.value = new Date()
     settings.lastSyncTime = Date.now()
     countdown.value = settings.refreshInterval
-    hasUpdatedOnce.value = true
+    tabFetchedOnce[tab] = true
   } catch (e) {
-    console.error('Failed to refresh data', e)
+    console.error(`Failed to refresh tab: ${tab}`, e)
   } finally {
     setTimeout(() => {
       isRefreshing.value = false
-    }, 300)
+      tabLoading[tab] = false
+    }, 250)
   }
 }
 
+/**
+ * 重置自动刷新倒计时
+ */
 export function resetAutoRefresh() {
-  if (timerId) {
-    clearInterval(timerId)
-    timerId = null
-  }
   if (countdownTimerId) {
     clearInterval(countdownTimerId)
     countdownTimerId = null
@@ -89,11 +115,20 @@ export function resetAutoRefresh() {
         countdown.value--
       } else {
         countdown.value = settings.refreshInterval
-        refreshData()
+        // 自动刷新仅请求当前激活的标签页
+        refreshTabData(activeTab.value)
       }
     }, 1000)
   }
 }
+
+// 监听标签页切换：按需请求该标签页的接口！
+watch(activeTab, (newTab) => {
+  if (newTab !== 'settings') {
+    // 切换时仅请求当前新选中的标签页
+    refreshTabData(newTab)
+  }
+})
 
 // Global singleton watcher on settings
 watch(
@@ -118,6 +153,8 @@ export function useMarket() {
     applyTheme(settings.theme || 'dark')
     resetAutoRefresh()
   }
+
+  const hasUpdatedOnce = computed(() => tabFetchedOnce[activeTab.value])
 
   const formattedLastUpdated = computed(() => {
     const d = lastUpdatedTime.value
@@ -185,12 +222,15 @@ export function useMarket() {
     activeTab,
     marketData,
     isRefreshing,
+    tabLoading,
+    tabFetchedOnce,
     hasUpdatedOnce,
     lastUpdatedTime,
     formattedLastUpdated,
     countdown,
     settings,
-    refreshData,
+    refreshData: () => refreshTabData(activeTab.value),
+    refreshTabData,
     resetAutoRefresh,
     getTrendInfo,
     toggleTheme

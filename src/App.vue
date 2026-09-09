@@ -25,7 +25,7 @@ import BottomTabBar from './components/BottomTabBar.vue'
 import GlobalTab from './views/GlobalTab.vue'
 import AsiaTab from './views/AsiaTab.vue'
 import MetalsTab from './views/MetalsTab.vue'
-import AiTab from './views/AiTab.vue'
+import ChinaTab from './views/ChinaTab.vue'
 import SettingsTab from './views/SettingsTab.vue'
 
 const { activeTab, refreshData } = useMarket()
@@ -38,8 +38,8 @@ const currentView = computed(() => {
       return AsiaTab
     case 'metals':
       return MetalsTab
-    case 'ai':
-      return AiTab
+    case 'china':
+      return ChinaTab
     case 'settings':
       return SettingsTab
     default:

@@ -35,17 +35,17 @@
 </template>
 
 <script setup lang="ts">
-import { Globe, Compass, Layers, Cpu, Settings } from 'lucide-vue-next'
+import { Globe, Compass, Layers, TrendingUp, Settings } from 'lucide-vue-next'
 import { useMarket } from '../composables/useMarket'
 import { TabKey } from '../types/market'
 
 const { activeTab } = useMarket()
 
 const tabs = [
-  { key: 'global' as TabKey, label: '全球', icon: Globe },
-  { key: 'asia' as TabKey, label: '日韩', icon: Compass },
-  { key: 'metals' as TabKey, label: '有色', icon: Layers },
-  { key: 'ai' as TabKey, label: 'AI', icon: Cpu },
+  { key: 'global' as TabKey, label: '全球·美股', icon: Globe },
+  { key: 'asia' as TabKey, label: '亚太·外汇', icon: Compass },
+  { key: 'metals' as TabKey, label: '有色金属', icon: Layers },
+  { key: 'china' as TabKey, label: 'A股·港股', icon: TrendingUp },
   { key: 'settings' as TabKey, label: '设置', icon: Settings },
 ]
 </script>

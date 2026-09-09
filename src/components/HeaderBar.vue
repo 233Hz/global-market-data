@@ -93,22 +93,22 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Globe, RotateCw, Compass, Layers, Cpu, Settings, Sun, Moon } from 'lucide-vue-next'
+import { Globe, RotateCw, Compass, Layers, TrendingUp, Settings, Sun, Moon } from 'lucide-vue-next'
 import { useMarket } from '../composables/useMarket'
 import { TabKey } from '../types/market'
 
 const { activeTab, isRefreshing, hasUpdatedOnce, formattedLastUpdated, countdown, settings, refreshData, toggleTheme } = useMarket()
 
 const tabs = [
-  { key: 'global' as TabKey, label: '全球', icon: Globe },
-  { key: 'asia' as TabKey, label: '日韩', icon: Compass },
-  { key: 'metals' as TabKey, label: '有色', icon: Layers },
-  { key: 'ai' as TabKey, label: 'AI', icon: Cpu },
+  { key: 'global' as TabKey, label: '全球·美股', icon: Globe },
+  { key: 'asia' as TabKey, label: '亚太·外汇', icon: Compass },
+  { key: 'metals' as TabKey, label: '有色金属', icon: Layers },
+  { key: 'china' as TabKey, label: 'A股·港股', icon: TrendingUp },
   { key: 'settings' as TabKey, label: '设置', icon: Settings },
 ]
 
 const currentTabLabel = computed(() => {
   const t = tabs.find(item => item.key === activeTab.value)
-  return t ? t.label : '全球'
+  return t ? t.label : '全球·美股'
 })
 </script>

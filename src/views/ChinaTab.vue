@@ -26,5 +26,5 @@ import MarketCard from '../components/MarketCard.vue'
 
 const { marketData } = useMarket()
 
-const sections = computed(() => marketData.value.ai || [])
+const sections = computed(() => marketData.value.china || [])
 </script>
