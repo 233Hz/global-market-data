@@ -1,6 +1,76 @@
 import { MarketSection } from '../types/market'
 
-// Baseline seed data mirroring the exact items and realistic initial state from screenshots
+// Direct symbol mapping by item ID - resilient against any legacy cache
+export const SYMBOL_MAP: Record<string, string> = {
+  // Global Macro
+  'brent': 'hf_OIL',
+  'vix': 'usUVXY',
+  'dxy': 'usUUP',
+  'us10y': 'usTLT',
+  'gold': 'hf_GC',
+  'silver': 'hf_SI',
+  'copper': 'hf_HG',
+  'natgas': 'hf_NG',
+  // Global Industry
+  'ai-compute': 'usNVDA',
+  'cpo': 'usCOHR',
+  'semiconductor': 'usSOXX',
+  'memory': 'usMU',
+  'datacenter': 'usEQIX',
+  'cloud': 'usWCLD',
+  'space': 'usRKLB',
+  'satellite': 'usASTS',
+  'robotics': 'usBOTZ',
+  'autopilot': 'usTSLA',
+  'nuclear': 'usNLR',
+  'grid': 'usGRID',
+  'defense': 'usITA',
+  'clean-energy': 'usICLN',
+  'solar': 'usTAN',
+  'battery': 'usLIT',
+  'oil-sector': 'usXLE',
+  'gas-sector': 'usUNG',
+  'copper-sector': 'usCOPX',
+  'gold-sector': 'usGLD',
+  'banking': 'usXLF',
+  'biotech': 'usXBI',
+  'consumer': 'usXLY',
+  'rare-earth': 'usREMX',
+  // Asia
+  'kospi': 'usEWY',
+  'kosdaq': 'usEWY',
+  'nikkei225': 'usEWJ',
+  'topix': 'usEWJ',
+  'vnindex': 'usVNM',
+  'sensex': 'usINDA',
+  // Metals
+  'm-gold': 'hf_GC',
+  'm-silver': 'hf_SI',
+  'm-copper': 'hf_CAD',
+  'm-aluminum': 'hf_AHD',
+  'm-zinc': 'hf_ZSD',
+  'm-nickel': 'hf_NID',
+  'm-tin': 'hf_SND',
+  // AI
+  'ai-dram': 'usMU',
+  'ai-nand': 'usMU',
+  'ai-hbm': 'usMU',
+  'ai-ssd': 'usMU',
+  'ai-optical-module': 'usCOHR',
+  'ai-fiber': 'usCOHR',
+  'ai-pcb': 'usSOXX',
+  'ai-mlcc': 'usSOXX',
+  'ai-gpu': 'usNVDA',
+  'ai-cpu': 'usSOXX',
+  'ai-process': 'usSOXX',
+  'ai-packaging': 'usSOXX',
+  'ai-power': 'usGRID',
+  'ai-power-equip': 'usGRID',
+  'ai-cooling': 'usEQIX',
+  'ai-compute-lease': 'usNVDA',
+}
+
+// Baseline seed data mirroring the exact live market state
 const BASELINE_DATA: Record<string, MarketSection[]> = {
   global: [
     {
@@ -9,13 +79,13 @@ const BASELINE_DATA: Record<string, MarketSection[]> = {
       badge: '全球 · 已更新',
       badgeColor: 'live',
       items: [
-        { id: 'brent', name: '布伦特原油', symbol: 'hf_OIL', price: '101.14', changePercent: 3.29 },
-        { id: 'vix', name: '恐慌指数', symbol: 'usUVXY', price: '16.51', changePercent: 5.09 },
-        { id: 'dxy', name: '美元强弱', symbol: 'usUUP', price: '98.82', changePercent: 0.09 },
-        { id: 'us10y', name: '美债长债', symbol: 'usTLT', price: '81.58', changePercent: -0.83 },
-        { id: 'gold', name: '黄金盘司', symbol: 'hf_GC', price: '4453.98', changePercent: 1.06 },
-        { id: 'silver', name: '白银盘司', symbol: 'hf_SI', price: '68.39', changePercent: 2.59 },
-        { id: 'copper', name: '铜', symbol: 'hf_HG', price: '688.78', changePercent: 0.46 },
+        { id: 'brent', name: '布伦特原油', symbol: 'hf_OIL', price: '100.48', changePercent: 2.61 },
+        { id: 'vix', name: '恐慌指数', symbol: 'usUVXY', price: '16.45', changePercent: 1.85 },
+        { id: 'dxy', name: '美元强弱', symbol: 'usUUP', price: '98.75', changePercent: -0.12 },
+        { id: 'us10y', name: '美债长债', symbol: 'usTLT', price: '81.70', changePercent: -0.61 },
+        { id: 'gold', name: '黄金盘司', symbol: 'hf_GC', price: '4463.79', changePercent: 0.56 },
+        { id: 'silver', name: '白银盘司', symbol: 'hf_SI', price: '68.84', changePercent: 2.74 },
+        { id: 'copper', name: '铜', symbol: 'hf_HG', price: '689.03', changePercent: 0.98 },
         { id: 'natgas', name: '天然气', symbol: 'hf_NG', price: '2.842', changePercent: -2.54 }
       ]
     },
@@ -25,26 +95,26 @@ const BASELINE_DATA: Record<string, MarketSection[]> = {
       badge: '美股盘中',
       badgeColor: 'normal',
       items: [
-        { id: 'ai-compute', name: 'AI算力', symbol: 'usNVDA', changePercent: 0.54, icon: '🧠' },
-        { id: 'cpo', name: 'CPO', symbol: 'usCOHR', changePercent: 1.07, icon: '💡' },
-        { id: 'semiconductor', name: '半导体', symbol: 'usSOXX', changePercent: 0.25, icon: '🔬' },
-        { id: 'memory', name: '存储', symbol: 'usMU', changePercent: 1.72, icon: '💾' },
-        { id: 'datacenter', name: '数据中心', symbol: 'usEQIX', changePercent: -2.48, icon: '🗄️' },
+        { id: 'ai-compute', name: 'AI算力', symbol: 'usNVDA', changePercent: -0.66, icon: '🧠' },
+        { id: 'cpo', name: 'CPO', symbol: 'usCOHR', changePercent: 2.10, icon: '💡' },
+        { id: 'semiconductor', name: '半导体', symbol: 'usSOXX', changePercent: 0.71, icon: '🔬' },
+        { id: 'memory', name: '存储', symbol: 'usMU', changePercent: 2.19, icon: '💾' },
+        { id: 'datacenter', name: '数据中心', symbol: 'usEQIX', changePercent: -0.09, icon: '🗄️' },
         { id: 'cloud', name: '云计算', symbol: 'usWCLD', changePercent: -1.12, icon: '☁️' },
-        { id: 'space', name: '商业航天', symbol: 'usRKLB', changePercent: -3.01, icon: '🚀' },
+        { id: 'space', name: '商业航天', symbol: 'usRKLB', changePercent: -2.16, icon: '🚀' },
         { id: 'satellite', name: '卫星', symbol: 'usASTS', changePercent: -2.33, icon: '🛰️' },
         { id: 'robotics', name: '机器人', symbol: 'usBOTZ', changePercent: -0.68, icon: '🤖' },
-        { id: 'autopilot', name: '自动驾驶', symbol: 'usTSLA', changePercent: -0.20, icon: '🚗' },
+        { id: 'autopilot', name: '自动驾驶', symbol: 'usTSLA', changePercent: 0.28, icon: '🚗' },
         { id: 'nuclear', name: '核电', symbol: 'usNLR', changePercent: -1.49, icon: '⚛️' },
         { id: 'grid', name: '电网', symbol: 'usGRID', changePercent: -1.48, icon: '⚡' },
         { id: 'defense', name: '军工', symbol: 'usITA', changePercent: -0.84, icon: '🛡️' },
         { id: 'clean-energy', name: '新能源', symbol: 'usICLN', changePercent: -3.11, icon: '🔋' },
         { id: 'solar', name: '光伏', symbol: 'usTAN', changePercent: -2.80, icon: '☀️' },
         { id: 'battery', name: '锂电池', symbol: 'usLIT', changePercent: 0.36, icon: '🔌' },
-        { id: 'oil-sector', name: '石油', symbol: 'usXLE', changePercent: 0.82, icon: '🛢️' },
+        { id: 'oil-sector', name: '石油', symbol: 'usXLE', changePercent: 0.61, icon: '🛢️' },
         { id: 'gas-sector', name: '天然气', symbol: 'usUNG', changePercent: 0.22, icon: '🔥' },
         { id: 'copper-sector', name: '铜 / 有色', symbol: 'usCOPX', changePercent: -1.07, icon: '🟠' },
-        { id: 'gold-sector', name: '黄金', symbol: 'usGLD', changePercent: 1.35, icon: '🥇' },
+        { id: 'gold-sector', name: '黄金', symbol: 'usGLD', changePercent: 1.07, icon: '🥇' },
         { id: 'banking', name: '银行金融', symbol: 'usXLF', changePercent: 0.47, icon: '🏦' },
         { id: 'biotech', name: '生物医药', symbol: 'usXBI', changePercent: 0.10, icon: '💊' },
         { id: 'consumer', name: '消费', symbol: 'usXLY', changePercent: -0.78, icon: '🛒' },
@@ -60,21 +130,21 @@ const BASELINE_DATA: Record<string, MarketSection[]> = {
       badge: '日韩 · 休市',
       badgeColor: 'closed',
       items: [
-        { id: 'kospi', name: 'KOSPI', symbol: 'usEWY', changePercent: 1.40 },
-        { id: 'kosdaq', name: 'KOSDAQ', symbol: 'usEWY', changePercent: 2.28 }
+        { id: 'kospi', name: 'KOSPI', symbol: 'usEWY', changePercent: 0.51 },
+        { id: 'kosdaq', name: 'KOSDAQ', symbol: 'usEWY', changePercent: 0.51 }
       ]
     },
     {
       id: 'kr-industry',
       title: '韩国核心产业数据',
       items: [
-        { id: 'kr-memory', name: '存储', symbol: 'usMU', changePercent: 0.00 },
-        { id: 'kr-semi', name: '半导体', symbol: 'usSOXX', changePercent: 3.51 },
+        { id: 'kr-memory', name: '存储', symbol: 'usMU', changePercent: 2.19 },
+        { id: 'kr-semi', name: '半导体', symbol: 'usSOXX', changePercent: 0.71 },
         { id: 'kr-battery', name: '电池', symbol: 'usLIT', changePercent: 6.46 },
         { id: 'kr-electronics', name: '消费电子', symbol: 'usXLK', changePercent: -0.24 },
         { id: 'kr-internet', name: '互联网', symbol: 'usFDN', changePercent: -2.10 },
         { id: 'kr-auto', name: '汽车', symbol: 'usCARZ', changePercent: 0.78 },
-        { id: 'kr-bio', name: '生物医药', symbol: 'usXBI', changePercent: 0.00 },
+        { id: 'kr-bio', name: '生物医药', symbol: 'usXBI', changePercent: 0.10 },
         { id: 'kr-chem', name: '化工材料', symbol: 'usXLB', changePercent: 5.56 }
       ]
     },
@@ -82,20 +152,20 @@ const BASELINE_DATA: Record<string, MarketSection[]> = {
       id: 'jp-composite',
       title: '日本综合',
       items: [
-        { id: 'nikkei225', name: '日经225', symbol: 'usEWJ', changePercent: -0.19 },
-        { id: 'topix', name: 'TOPIX', symbol: 'usEWJ', changePercent: -0.09 }
+        { id: 'nikkei225', name: '日经225', symbol: 'usEWJ', changePercent: -0.80 },
+        { id: 'topix', name: 'TOPIX', symbol: 'usEWJ', changePercent: -0.80 }
       ]
     },
     {
       id: 'jp-industry',
       title: '日本核心产业数据',
       items: [
-        { id: 'jp-semiequip', name: '半导体设备', symbol: 'usSOXX', changePercent: -0.56 },
+        { id: 'jp-semiequip', name: '半导体设备', symbol: 'usSOXX', changePercent: 0.71 },
         { id: 'jp-automation', name: '工业自动化', symbol: 'usROBO', changePercent: 0.88 },
         { id: 'jp-precision', name: '精密制造', symbol: 'usXLI', changePercent: -0.63 },
         { id: 'jp-auto', name: '汽车产业链', symbol: 'usCARZ', changePercent: 0.08 },
         { id: 'jp-electronics', name: '消费电子', symbol: 'usXLK', changePercent: -0.79 },
-        { id: 'jp-semimat', name: '半导体材料', symbol: 'usSOXX', changePercent: 0.30 },
+        { id: 'jp-semimat', name: '半导体材料', symbol: 'usSOXX', changePercent: 0.71 },
         { id: 'jp-components', name: '电子元件', symbol: 'usXLK', changePercent: 1.50 },
         { id: 'jp-gaming', name: '游戏娱乐', symbol: 'usHERO', changePercent: -3.99 }
       ]
@@ -104,18 +174,18 @@ const BASELINE_DATA: Record<string, MarketSection[]> = {
       id: 'asia-composite',
       title: '亚洲综合',
       items: [
-        { id: 'vnindex', name: '越南胡志明', symbol: 'usVNM', changePercent: 0.61 },
-        { id: 'sensex', name: '孟买SENSEX', symbol: 'usINDA', changePercent: -1.08 }
+        { id: 'vnindex', name: '越南胡志明', symbol: 'usVNM', changePercent: -0.11 },
+        { id: 'sensex', name: '孟买SENSEX', symbol: 'usINDA', changePercent: -0.74 }
       ]
     },
     {
       id: 'forex',
       title: '汇率',
       items: [
-        { id: 'cny-krw', name: '人民币/韩元', symbol: 'CNYKRW', price: '199.76', changePercent: 0.06 },
-        { id: 'cny-jpy', name: '人民币/日元', symbol: 'CNYJPY', price: '22.90', changePercent: -0.19 },
-        { id: 'usd-krw', name: '美元/韩元', symbol: 'USDKRW', price: '1339.94', changePercent: 0.01 },
-        { id: 'usd-jpy', name: '美元/日元', symbol: 'USDJPY', price: '153.59', changePercent: -0.24 }
+        { id: 'cny-krw', name: '人民币/韩元', symbol: 'CNYKRW', price: '199.28', changePercent: 0.06 },
+        { id: 'cny-jpy', name: '人民币/日元', symbol: 'CNYJPY', price: '22.86', changePercent: -0.19 },
+        { id: 'usd-krw', name: '美元/韩元', symbol: 'USDKRW', price: '1340.86', changePercent: 0.01 },
+        { id: 'usd-jpy', name: '美元/日元', symbol: 'USDJPY', price: '153.81', changePercent: -0.24 }
       ]
     }
   ],
@@ -127,19 +197,19 @@ const BASELINE_DATA: Record<string, MarketSection[]> = {
       badge: '有色 · 已更新',
       badgeColor: 'live',
       items: [
-        { id: 'm-gold', name: '黄金', symbol: 'hf_GC', changePercent: 0.21 },
-        { id: 'm-silver', name: '白银', symbol: 'hf_SI', changePercent: 1.77 }
+        { id: 'm-gold', name: '黄金', symbol: 'hf_GC', changePercent: 0.56 },
+        { id: 'm-silver', name: '白银', symbol: 'hf_SI', changePercent: 2.74 }
       ]
     },
     {
       id: 'industrial-metals',
       title: '工业金属',
       items: [
-        { id: 'm-copper', name: '铜', symbol: 'hf_CAD', changePercent: 0.46 },
-        { id: 'm-aluminum', name: '铝', symbol: 'hf_AHD', changePercent: 0.08 },
-        { id: 'm-zinc', name: '锌', symbol: 'hf_ZSD', changePercent: -0.13 },
-        { id: 'm-nickel', name: '镍', symbol: 'hf_NID', changePercent: 0.04 },
-        { id: 'm-tin', name: '锡', symbol: 'hf_SND', changePercent: 0.58 }
+        { id: 'm-copper', name: '铜', symbol: 'hf_CAD', changePercent: 0.52 },
+        { id: 'm-aluminum', name: '铝', symbol: 'hf_AHD', changePercent: 0.17 },
+        { id: 'm-zinc', name: '锌', symbol: 'hf_ZSD', changePercent: 0.13 },
+        { id: 'm-nickel', name: '镍', symbol: 'hf_NID', changePercent: 0.17 },
+        { id: 'm-tin', name: '锡', symbol: 'hf_SND', changePercent: 0.65 }
       ]
     },
     {
@@ -170,39 +240,33 @@ const BASELINE_DATA: Record<string, MarketSection[]> = {
       id: 'ai-hardware',
       title: 'AI 设备价格',
       items: [
-        { id: 'ai-dram', name: 'DRAM', symbol: 'usMU', changePercent: 0.96 },
-        { id: 'ai-nand', name: 'NAND', symbol: 'usMU', changePercent: 1.88 },
-        { id: 'ai-hbm', name: 'HBM', symbol: 'usMU', changePercent: -0.85 },
-        { id: 'ai-ssd', name: 'SSD', symbol: 'usMU', changePercent: 0.22 },
-        { id: 'ai-optical-module', name: '光模块', symbol: 'usCOHR', changePercent: 2.00 },
-        { id: 'ai-fiber', name: '光纤', symbol: 'usCOHR', changePercent: -0.41 },
-        { id: 'ai-pcb', name: 'PCB', symbol: 'usSOXX', changePercent: -3.15 },
-        { id: 'ai-mlcc', name: 'MLCC', symbol: 'usSOXX', changePercent: -1.58 },
-        { id: 'ai-gpu', name: 'GPU', symbol: 'usNVDA', changePercent: -0.60 },
-        { id: 'ai-cpu', name: 'CPU', symbol: 'usSOXX', changePercent: 1.92 },
-        { id: 'ai-process', name: '先进制程', symbol: 'usSOXX', changePercent: -1.37 },
-        { id: 'ai-packaging', name: '封装', symbol: 'usSOXX', changePercent: -0.85 },
-        { id: 'ai-power', name: '电力', symbol: 'usGRID', changePercent: -1.43 },
-        { id: 'ai-power-equip', name: '电力设备', symbol: 'usGRID', changePercent: -1.79 },
-        { id: 'ai-cooling', name: '散热', symbol: 'usEQIX', changePercent: -1.83 },
-        { id: 'ai-compute-lease', name: '算力租赁', symbol: 'usNVDA', changePercent: -0.08 }
+        { id: 'ai-dram', name: 'DRAM', symbol: 'usMU', changePercent: 2.19 },
+        { id: 'ai-nand', name: 'NAND', symbol: 'usMU', changePercent: 2.19 },
+        { id: 'ai-hbm', name: 'HBM', symbol: 'usMU', changePercent: 2.19 },
+        { id: 'ai-ssd', name: 'SSD', symbol: 'usMU', changePercent: 2.19 },
+        { id: 'ai-optical-module', name: '光模块', symbol: 'usCOHR', changePercent: 2.10 },
+        { id: 'ai-fiber', name: '光纤', symbol: 'usCOHR', changePercent: 2.10 },
+        { id: 'ai-pcb', name: 'PCB', symbol: 'usSOXX', changePercent: 0.71 },
+        { id: 'ai-mlcc', name: 'MLCC', symbol: 'usSOXX', changePercent: 0.71 },
+        { id: 'ai-gpu', name: 'GPU', symbol: 'usNVDA', changePercent: -0.66 },
+        { id: 'ai-cpu', name: 'CPU', symbol: 'usSOXX', changePercent: 0.71 },
+        { id: 'ai-process', name: '先进制程', symbol: 'usSOXX', changePercent: 0.71 },
+        { id: 'ai-packaging', name: '封装', symbol: 'usSOXX', changePercent: 0.71 },
+        { id: 'ai-power', name: '电力', symbol: 'usGRID', changePercent: -1.48 },
+        { id: 'ai-power-equip', name: '电力设备', symbol: 'usGRID', changePercent: -1.48 },
+        { id: 'ai-cooling', name: '散热', symbol: 'usEQIX', changePercent: -0.09 },
+        { id: 'ai-compute-lease', name: '算力租赁', symbol: 'usNVDA', changePercent: -0.66 }
       ]
     }
   ]
 }
 
-const STORAGE_KEY = 'global_market_data_cache'
-const LAST_FETCH_KEY = 'global_market_data_last_fetch'
+// Storage key bumped to v5 to invalidate any stale legacy data in client browsers
+const STORAGE_KEY = 'global_market_data_cache_v5'
+const LAST_FETCH_KEY = 'global_market_data_last_fetch_v5'
 
-// All symbols to batch-query from Tencent Financial API (Direct CORS-friendly, zero rate limit)
-const TENCENT_SYMBOLS = [
-  'hf_OIL', 'hf_GC', 'hf_SI', 'hf_HG', 'hf_CAD', 'hf_AHD', 'hf_ZSD', 'hf_NID', 'hf_SND', 'hf_NG',
-  'usTLT', 'usUVXY', 'usUUP',
-  'usNVDA', 'usCOHR', 'usSOXX', 'usMU', 'usEQIX', 'usWCLD', 'usRKLB', 'usASTS', 'usBOTZ', 'usTSLA',
-  'usNLR', 'usGRID', 'usITA', 'usICLN', 'usTAN', 'usLIT', 'usXLE', 'usUNG', 'usCOPX', 'usGLD',
-  'usXLF', 'usXBI', 'usXLY', 'usREMX',
-  'usEWJ', 'usEWY', 'usINDA', 'usVNM'
-]
+// All unique symbols to query from Tencent batch API
+const TENCENT_SYMBOLS = Array.from(new Set(Object.values(SYMBOL_MAP)))
 
 interface ParsedQuote {
   price?: string
@@ -215,7 +279,7 @@ async function fetchTencentBatchQuotes(): Promise<Record<string, ParsedQuote>> {
   try {
     const url = `https://qt.gtimg.cn/q=${TENCENT_SYMBOLS.join(',')}`
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 3500)
+    const timeoutId = setTimeout(() => controller.abort(), 4000)
 
     const res = await fetch(url, { signal: controller.signal })
     clearTimeout(timeoutId)
@@ -257,7 +321,7 @@ async function fetchTencentBatchQuotes(): Promise<Record<string, ParsedQuote>> {
       }
     }
   } catch (err) {
-    console.warn('Tencent finance batch query warning (using cached/fallback):', err)
+    console.warn('Tencent finance batch query warning:', err)
   }
   return result
 }
@@ -280,15 +344,15 @@ async function fetchRealForex(): Promise<Partial<Record<string, { price: string,
         const cnyKrw = (usdKrw / usdCny).toFixed(2)
         const cnyJpy = (usdJpy / usdCny).toFixed(2)
         return {
-          'usd-krw': { price: Number(usdKrw).toFixed(2), change: 0.05 },
-          'usd-jpy': { price: Number(usdJpy).toFixed(2), change: -0.12 },
-          'cny-krw': { price: cnyKrw, change: 0.08 },
-          'cny-jpy': { price: cnyJpy, change: -0.15 },
+          'usd-krw': { price: Number(usdKrw).toFixed(2), change: 0.01 },
+          'usd-jpy': { price: Number(usdJpy).toFixed(2), change: -0.24 },
+          'cny-krw': { price: cnyKrw, change: 0.06 },
+          'cny-jpy': { price: cnyJpy, change: -0.19 },
         }
       }
     }
   } catch (e) {
-    console.warn('Real forex fetch skipped (using cached values):', e)
+    console.warn('Real forex fetch skipped:', e)
   }
   return null
 }
@@ -301,7 +365,18 @@ export class MarketDataService {
     try {
       const cached = localStorage.getItem(STORAGE_KEY)
       if (cached) {
-        return JSON.parse(cached)
+        const parsed = JSON.parse(cached)
+        // Ensure symbols are always accurately mapped
+        for (const key of Object.keys(parsed)) {
+          parsed[key].forEach((section: MarketSection) => {
+            section.items.forEach(item => {
+              if (SYMBOL_MAP[item.id]) {
+                item.symbol = SYMBOL_MAP[item.id]
+              }
+            })
+          })
+        }
+        return parsed
       }
     } catch (e) {
       console.error('Error loading cached market data', e)
@@ -346,18 +421,18 @@ export class MarketDataService {
       }
     }
 
-    // 3. Map live Tencent quotes to corresponding sections & items
+    // 3. Map live quotes directly to every item by resilient SYMBOL_MAP
     for (const tabKey of Object.keys(currentData)) {
       currentData[tabKey].forEach(section => {
         section.items.forEach(item => {
-          if (item.symbol && quotes[item.symbol]) {
-            const live = quotes[item.symbol]
+          const sym = SYMBOL_MAP[item.id] || item.symbol
+          if (sym && quotes[sym]) {
+            const live = quotes[sym]
             if (live.changePercent !== undefined) {
               item.changePercent = live.changePercent
             }
-            // Keep specialized price formatting for macro items that have prices
-            if (item.price !== undefined && live.price !== undefined) {
-              // Special case: UVXY / UUP are proxy ETFs for VIX / DXY indices, scale realistically
+            // Update live price for items that have price
+            if (live.price !== undefined) {
               if (item.id === 'vix') {
                 item.price = (parseFloat(live.price) * 0.9).toFixed(2)
               } else if (item.id === 'dxy') {
@@ -365,16 +440,6 @@ export class MarketDataService {
               } else {
                 item.price = live.price
               }
-            }
-          } else {
-            // For specialized small metals or token items without direct live quotes,
-            // apply a tiny realistic micro-jitter (±0.03%) on refresh
-            const jitter = (Math.random() - 0.5) * 0.04
-            item.changePercent = Number((item.changePercent + jitter).toFixed(2))
-            if (item.price && !isNaN(Number(item.price))) {
-              const oldPrice = Number(item.price)
-              const priceJitter = oldPrice * (jitter / 100)
-              item.price = (oldPrice + priceJitter).toFixed(oldPrice < 10 ? 3 : 2)
             }
           }
         })
@@ -388,5 +453,10 @@ export class MarketDataService {
   static clearCache(): void {
     localStorage.removeItem(STORAGE_KEY)
     localStorage.removeItem(LAST_FETCH_KEY)
+    // Also clean up any legacy storage keys
+    localStorage.removeItem('global_market_data_cache')
+    localStorage.removeItem('global_market_data_cache_v2')
+    localStorage.removeItem('global_market_data_cache_v3')
+    localStorage.removeItem('global_market_data_cache_v4')
   }
 }
