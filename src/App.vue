@@ -1,10 +1,10 @@
 <template>
-  <div class="min-h-screen bg-[#0a0a0b] text-white flex flex-col selection:bg-[#5e6ad2]/30 selection:text-white">
+  <div class="min-h-screen bg-[#f8f9fa] dark:bg-[#0a0a0b] text-zinc-900 dark:text-white flex flex-col selection:bg-[#5e6ad2]/30 selection:text-white transition-colors duration-150">
     <!-- Top Navigation / Header -->
     <HeaderBar />
 
-    <!-- Main Content Canvas -->
-    <main class="flex-1 max-w-4xl w-full mx-auto px-3.5 md:px-6 py-4 md:py-8 pb-20 md:pb-12">
+    <!-- Main Content Canvas: max-w-7xl allows high-density layout on PC -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-3 md:px-6 py-3.5 md:py-6 pb-20 md:pb-8">
       <Transition name="fade" mode="out-in">
         <KeepAlive>
           <component :is="currentView" />
@@ -28,7 +28,7 @@ import MetalsTab from './views/MetalsTab.vue'
 import AiTab from './views/AiTab.vue'
 import SettingsTab from './views/SettingsTab.vue'
 
-const { activeTab, setup, refreshData } = useMarket()
+const { activeTab, refreshData } = useMarket()
 
 const currentView = computed(() => {
   switch (activeTab.value) {
@@ -48,7 +48,6 @@ const currentView = computed(() => {
 })
 
 onMounted(() => {
-  setup()
   // Trigger initial live fetch in background
   refreshData()
 })

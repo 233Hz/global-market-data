@@ -22,6 +22,7 @@ export type TabKey = 'global' | 'asia' | 'metals' | 'ai' | 'settings'
 
 export interface UserSettings {
   colorMode: 'cn' | 'global' // 'cn': red up green down, 'global': green up red down
+  theme: 'dark' | 'light'
   autoRefresh: boolean
   refreshInterval: number // in seconds
   lastSyncTime?: number
