@@ -4,7 +4,7 @@
     <HeaderBar />
 
     <!-- Main Content Canvas: max-w-7xl allows high-density layout on PC -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-3 md:px-6 py-3.5 md:py-6 pb-20 md:pb-8">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 md:px-8 pt-5 md:pt-7 pb-24 md:pb-12">
       <Transition name="fade" mode="out-in">
         <KeepAlive>
           <component :is="currentView" />

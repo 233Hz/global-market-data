@@ -1,6 +1,10 @@
 <template>
-  <header class="sticky top-0 z-40 w-full bg-white/95 dark:bg-[#0a0a0b]/95 backdrop-blur-sm border-b border-zinc-200 dark:border-white/10 px-3 md:px-6 transition-colors duration-150">
-    <div class="max-w-7xl mx-auto flex items-center justify-between h-13 md:h-15 gap-3">
+  <header
+    class="sticky top-0 z-40 w-full bg-white/95 dark:bg-[#0a0a0b]/95 backdrop-blur-sm border-b border-zinc-200 dark:border-white/10 px-4 md:px-8 pt-3.5 md:pt-0 pb-2.5 md:pb-0 transition-colors duration-150"
+    style="padding-top: max(14px, env(safe-area-inset-top));"
+  >
+    <!-- Main Header Bar -->
+    <div class="max-w-7xl mx-auto flex items-center justify-between h-10 md:h-16 gap-3">
       <!-- Left: Logo & Status indicator -->
       <div class="flex items-center gap-3">
         <div class="flex items-center gap-2">
@@ -10,7 +14,7 @@
           <span class="font-sans font-semibold tracking-tight text-base md:text-lg text-zinc-900 dark:text-white">市场板块</span>
         </div>
 
-        <!-- Status Dot -->
+        <!-- Status Dot (Desktop & Tablet) -->
         <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-100/80 dark:bg-white/[0.03] text-xs font-medium text-zinc-600 dark:text-zinc-400">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
           <span>{{ currentTabLabel }} · 已更新 ({{ formattedLastUpdated }})</span>
@@ -74,8 +78,8 @@
       </div>
     </div>
 
-    <!-- Mobile Subheader with Live Status on Small Screens -->
-    <div class="sm:hidden flex items-center justify-between py-1.5 text-xs text-zinc-500 dark:text-zinc-400 border-t border-zinc-200 dark:border-white/5">
+    <!-- Mobile Subheader with Live Status & Countdown -->
+    <div class="sm:hidden flex items-center justify-between pt-2 pb-1 text-xs text-zinc-500 dark:text-zinc-400 border-t border-zinc-200/80 dark:border-white/5 mt-2">
       <div class="flex items-center gap-1.5">
         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
         <span>{{ currentTabLabel }} · 已更新 ({{ formattedLastUpdated }})</span>
