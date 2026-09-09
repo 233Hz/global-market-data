@@ -1,5 +1,161 @@
 import { MarketSection } from '../types/market'
 
+/**
+ * Interface and endpoint definitions aligned with GCC (魔方市场)
+ * Reference: https://github.com/MaHuisir/GCC/blob/main/miniprogram/utils/api.ts
+ */
+
+const BASE_URL = 'https://mh-ai.cn/gcc'
+const TIMEOUT = 8000
+
+/** 通用响应结构 */
+export interface ApiResponse<T = any> {
+  success: boolean
+  data: T
+  timestamp: number
+  error?: string
+  code?: string
+}
+
+/** 行情数据项（统一字段） */
+export interface QuoteItem {
+  code?: string
+  name?: string
+  subtitle?: string
+  icon?: string
+  desc?: string
+  flag?: string
+  unit?: string
+  type?: string
+  market?: string
+  imageSrc?: string
+  iconColor?: string
+  price: string
+  change: string
+  changePercent?: string
+  changeDir: 'up' | 'down' | 'flat'
+  open?: string
+  high?: string
+  low?: string
+  prevClose?: string
+  time?: string
+  unavailable?: boolean
+  [key: string]: any
+}
+
+/** 市场状态代码与结构 */
+export type MarketStatusCode = 'open' | 'closed' | 'pre' | 'lunch' | 'overnight'
+
+export interface MarketStatus {
+  status: MarketStatusCode
+  isTrading: boolean
+  label: string
+  fullLabel: string
+  nextOpenLabel?: string
+}
+
+/** 首页聚合数据 */
+export interface HomepageQuotes {
+  globalEconomic: QuoteItem[]
+  usSectors: QuoteItem[]
+  marketStatus: {
+    us: MarketStatus
+    cn: MarketStatus
+    hk: MarketStatus
+    forex: MarketStatus
+  }
+}
+
+/** 指数响应 */
+export interface IndicesResponse {
+  indices: QuoteItem[]
+  marketStatus: Record<string, MarketStatus>
+}
+
+/** 股票响应 */
+export interface StocksResponse {
+  stocks: QuoteItem[]
+  marketStatus: Record<string, MarketStatus>
+}
+
+/** 金属响应 */
+export interface MetalsResponse {
+  metals: QuoteItem[]
+  summary?: { precious: number; base: number }
+  marketStatus: {
+    metals: MarketStatus
+  }
+}
+
+/** 外汇响应 */
+export interface ForexResponse {
+  forex: QuoteItem[]
+  marketStatus: {
+    forex: MarketStatus
+  }
+}
+
+/** A股板块响应 */
+export interface CnSectorsResponse {
+  cnSectors: QuoteItem[]
+  marketStatus: {
+    cn: MarketStatus
+  }
+}
+
+/**
+ * 通用 GET 请求封装（带防缓存时间戳参数 _t 与自动超时处理）
+ * 结构对齐 GCC api.ts 的 request 函数
+ */
+function request<T>(path: string, params?: Record<string, any>, signal?: AbortSignal): Promise<T> {
+  let url = `${BASE_URL}${path}`
+  const finalParams: Record<string, any> = { ...(params || {}) }
+  if (!finalParams._t && !finalParams.fresh) {
+    finalParams._t = Date.now()
+  }
+  const qs = Object.entries(finalParams)
+    .filter(([_, v]) => v !== undefined && v !== null && v !== '')
+    .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+    .join('&')
+  if (qs) url += `?${qs}`
+
+  return fetch(url, {
+    signal,
+    headers: { 'Content-Type': 'application/json' }
+  }).then(async res => {
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    const json = await res.json()
+    if (!json.success) throw new Error(json.error || 'API response failed')
+    return json as T
+  })
+}
+
+// ===== GCC 业务 API 方法 (对齐 GCC/miniprogram/utils/api.ts) =====
+
+export function fetchHomepageQuotes(signal?: AbortSignal): Promise<ApiResponse<HomepageQuotes>> {
+  return request<ApiResponse<HomepageQuotes>>('/api/quotes', undefined, signal)
+}
+
+export function fetchIndices(signal?: AbortSignal): Promise<ApiResponse<IndicesResponse>> {
+  return request<ApiResponse<IndicesResponse>>('/api/indices', undefined, signal)
+}
+
+export function fetchStocks(market: 'us' | 'jkr' | 'all' = 'all', signal?: AbortSignal): Promise<ApiResponse<StocksResponse>> {
+  return request<ApiResponse<StocksResponse>>('/api/stocks', { market }, signal)
+}
+
+export function fetchMetals(signal?: AbortSignal): Promise<ApiResponse<MetalsResponse>> {
+  return request<ApiResponse<MetalsResponse>>('/api/metals', undefined, signal)
+}
+
+export function fetchForex(signal?: AbortSignal): Promise<ApiResponse<ForexResponse>> {
+  return request<ApiResponse<ForexResponse>>('/api/forex', undefined, signal)
+}
+
+export function fetchCnSectors(signal?: AbortSignal): Promise<ApiResponse<CnSectorsResponse>> {
+  return request<ApiResponse<CnSectorsResponse>>('/api/cn/sectors', undefined, signal)
+}
+
 // Items that legitimately have a numeric price displayed in the UI
 const ITEMS_WITH_PRICE = new Set([
   'brent', 'vix', 'dxy', 'us10y', 'gold', 'silver', 'copper', 'natgas',
@@ -217,17 +373,6 @@ const BASELINE_DATA: Record<string, MarketSection[]> = {
 const STORAGE_KEY = 'global_market_data_cache_v9'
 const LAST_FETCH_KEY = 'global_market_data_last_fetch_v9'
 
-// GCC Backend base URL from https://github.com/MaHuisir/GCC
-const GCC_BASE_URL = 'https://mh-ai.cn/gcc'
-
-export interface GccMarketStatus {
-  status: string
-  isTrading: boolean
-  label: string
-  fullLabel: string
-  nextOpenLabel?: string
-}
-
 function parseGccPercent(val?: string | number): number | undefined {
   if (typeof val === 'number') return val
   if (!val) return undefined
@@ -244,50 +389,46 @@ function formatGccPrice(p?: string | number): string | undefined {
 }
 
 /**
- * Fetch market data exclusively from GCC (魔方市场) backend API
- * Reference: https://github.com/MaHuisir/GCC / API-CONTRACT.md
- * Endpoints:
- * - /api/quotes   (Global macro + US sectors + US market status)
- * - /api/metals   (Precious & industrial metals + metals status)
- * - /api/indices  (Asia, US, CN indices + regional market statuses)
- * - /api/forex    (Forex exchange rates + forex status)
- * - /api/cn/sectors (China industry sectors)
+ * Fetch market data exclusively from GCC backend API endpoints
  */
 async function fetchGccData(): Promise<{
-  quotes?: any
-  metals?: any
-  indices?: any
-  forex?: any
-  cnSectors?: any
-  marketStatus: Record<string, GccMarketStatus>
+  quotes?: HomepageQuotes
+  metals?: MetalsResponse
+  indices?: IndicesResponse
+  forex?: ForexResponse
+  cnSectors?: CnSectorsResponse
+  stocks?: StocksResponse
+  marketStatus: Record<string, MarketStatus>
 } | null> {
   try {
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 8000)
+    const timeoutId = setTimeout(() => controller.abort(), TIMEOUT)
 
-    const [quotesRes, metalsRes, indicesRes, forexRes, cnSectorsRes] = await Promise.allSettled([
-      fetch(`${GCC_BASE_URL}/api/quotes`, { signal: controller.signal }).then(r => r.json()),
-      fetch(`${GCC_BASE_URL}/api/metals`, { signal: controller.signal }).then(r => r.json()),
-      fetch(`${GCC_BASE_URL}/api/indices`, { signal: controller.signal }).then(r => r.json()),
-      fetch(`${GCC_BASE_URL}/api/forex`, { signal: controller.signal }).then(r => r.json()),
-      fetch(`${GCC_BASE_URL}/api/cn/sectors`, { signal: controller.signal }).then(r => r.json())
+    const [quotesRes, metalsRes, indicesRes, forexRes, cnSectorsRes, stocksRes] = await Promise.allSettled([
+      fetchHomepageQuotes(controller.signal),
+      fetchMetals(controller.signal),
+      fetchIndices(controller.signal),
+      fetchForex(controller.signal),
+      fetchCnSectors(controller.signal),
+      fetchStocks('all', controller.signal)
     ])
     clearTimeout(timeoutId)
 
-    const quotes = quotesRes.status === 'fulfilled' && quotesRes.value?.success ? quotesRes.value.data : null
-    const metals = metalsRes.status === 'fulfilled' && metalsRes.value?.success ? metalsRes.value.data : null
-    const indices = indicesRes.status === 'fulfilled' && indicesRes.value?.success ? indicesRes.value.data : null
-    const forex = forexRes.status === 'fulfilled' && forexRes.value?.success ? forexRes.value.data : null
-    const cnSectors = cnSectorsRes.status === 'fulfilled' && cnSectorsRes.value?.success ? cnSectorsRes.value.data : null
+    const quotes = quotesRes.status === 'fulfilled' ? quotesRes.value.data : undefined
+    const metals = metalsRes.status === 'fulfilled' ? metalsRes.value.data : undefined
+    const indices = indicesRes.status === 'fulfilled' ? indicesRes.value.data : undefined
+    const forex = forexRes.status === 'fulfilled' ? forexRes.value.data : undefined
+    const cnSectors = cnSectorsRes.status === 'fulfilled' ? cnSectorsRes.value.data : undefined
+    const stocks = stocksRes.status === 'fulfilled' ? stocksRes.value.data : undefined
 
-    const marketStatus: Record<string, GccMarketStatus> = {
+    const marketStatus: Record<string, MarketStatus> = {
       ...(quotes?.marketStatus || {}),
       ...(metals?.marketStatus || {}),
       ...(indices?.marketStatus || {}),
       ...(forex?.marketStatus || {})
     }
 
-    return { quotes, metals, indices, forex, cnSectors, marketStatus }
+    return { quotes, metals, indices, forex, cnSectors, stocks, marketStatus }
   } catch (err) {
     console.warn('GCC API fetch error:', err)
     return null
@@ -318,7 +459,7 @@ export class MarketDataService {
 
   /**
    * Fetch updated market data strictly and exclusively from GCC API (https://mh-ai.cn/gcc)
-   * Unified data from GCC endpoints
+   * Fully aligned with MaHuisir/GCC miniprogram/utils/api.ts contract
    */
   static async refreshAllData(): Promise<Record<string, MarketSection[]>> {
     const currentData: Record<string, MarketSection[]> = this.loadData()
@@ -328,12 +469,13 @@ export class MarketDataService {
       return currentData
     }
 
-    const { quotes, metals, indices, forex, cnSectors, marketStatus } = gccData
-    const usSectorsList: any[] = quotes?.usSectors || []
-    const cnSectorsList: any[] = cnSectors?.cnSectors || []
-    const metalsList: any[] = metals?.metals || []
-    const indicesList: any[] = indices?.indices || []
-    const forexList: any[] = forex?.forex || []
+    const { quotes, metals, indices, forex, cnSectors, stocks, marketStatus } = gccData
+    const usSectorsList: QuoteItem[] = quotes?.usSectors || []
+    const cnSectorsList: QuoteItem[] = cnSectors?.cnSectors || []
+    const metalsList: QuoteItem[] = metals?.metals || []
+    const indicesList: QuoteItem[] = indices?.indices || []
+    const forexList: QuoteItem[] = forex?.forex || []
+    const stocksList: QuoteItem[] = stocks?.stocks || []
 
     // Helper to find US sector change
     const findUsSectorChange = (codeOrName: string): number | undefined => {
@@ -344,6 +486,12 @@ export class MarketDataService {
     // Helper to find CN sector change
     const findCnSectorChange = (codeOrName: string): number | undefined => {
       const match = cnSectorsList.find(s => s.code === codeOrName || (s.name && s.name.includes(codeOrName)))
+      return match ? parseGccPercent(match.changePercent) : undefined
+    }
+
+    // Helper to find individual stock change
+    const findStockChange = (codeOrName: string): number | undefined => {
+      const match = stocksList.find(s => s.code === codeOrName || (s.name && s.name.includes(codeOrName)))
       return match ? parseGccPercent(match.changePercent) : undefined
     }
 
@@ -361,14 +509,14 @@ export class MarketDataService {
         }
 
         const ge = quotes?.globalEconomic || []
-        const brentItem = ge.find((x: any) => x.code === 'hf_OIL' || x.name.includes('原油'))
-        const vixItem = ge.find((x: any) => x.code === 'gb_vxx' || x.subtitle === 'VIX' || x.name.includes('恐慌'))
-        const dxyItem = ge.find((x: any) => x.code === 'DINIW' || x.name.includes('美元'))
-        const us10yItem = ge.find((x: any) => x.code === 'gb_tlt' || x.name.includes('美债'))
-        const goldItem = metalsList.find((x: any) => x.code === 'hf_GC' || x.name === '黄金')
-        const silverItem = metalsList.find((x: any) => x.code === 'hf_SI' || x.name === '白银')
-        const copperItem = metalsList.find((x: any) => x.code === 'hf_CAD' || x.name === '铜')
-        const natgasEnergy = cnSectorsList.find((x: any) => x.code === 'cn_energy' || x.name.includes('能源'))
+        const brentItem = ge.find(x => x.code === 'hf_OIL' || (x.name && x.name.includes('原油')))
+        const vixItem = ge.find(x => x.code === 'gb_vxx' || x.subtitle === 'VIX' || (x.name && x.name.includes('恐慌')))
+        const dxyItem = ge.find(x => x.code === 'DINIW' || (x.name && x.name.includes('美元')))
+        const us10yItem = ge.find(x => x.code === 'gb_tlt' || (x.name && x.name.includes('美债')))
+        const goldItem = metalsList.find(x => x.code === 'hf_GC' || x.name === '黄金')
+        const silverItem = metalsList.find(x => x.code === 'hf_SI' || x.name === '白银')
+        const copperItem = metalsList.find(x => x.code === 'hf_CAD' || x.name === '铜')
+        const natgasEnergy = cnSectorsList.find(x => x.code === 'cn_energy' || (x.name && x.name.includes('能源')))
 
         macroSection.items.forEach(item => {
           if (item.id === 'brent' && brentItem) {
@@ -416,16 +564,16 @@ export class MarketDataService {
         }
 
         const globalIndustryMap: Record<string, () => number | undefined> = {
-          'ai-compute': () => findCnSectorChange('cn_ai') ?? findUsSectorChange('gb_smh'),
+          'ai-compute': () => findCnSectorChange('cn_ai') ?? findStockChange('gb_nvda') ?? findUsSectorChange('gb_smh'),
           'cpo': () => findCnSectorChange('cn_chip') ?? findUsSectorChange('gb_soxx'),
           'semiconductor': () => findUsSectorChange('gb_soxx') ?? findCnSectorChange('cn_chip'),
           'memory': () => findUsSectorChange('gb_smh') ?? findUsSectorChange('存储'),
           'datacenter': () => findUsSectorChange('gb_igv') ?? findCnSectorChange('cn_internet'),
-          'cloud': () => findUsSectorChange('gb_igv') ?? findUsSectorChange('云计算'),
+          'cloud': () => findStockChange('gb_amzn') ?? findUsSectorChange('gb_igv') ?? findUsSectorChange('云计算'),
           'space': () => findUsSectorChange('gb_ita') ?? findCnSectorChange('cn_industrial'),
           'satellite': () => findUsSectorChange('gb_ita') ?? findCnSectorChange('cn_industrial'),
           'robotics': () => findUsSectorChange('gb_botz') ?? findUsSectorChange('机器人'),
-          'autopilot': () => findUsSectorChange('gb_idrv') ?? findUsSectorChange('自动驾驶'),
+          'autopilot': () => findStockChange('gb_tsla') ?? findUsSectorChange('gb_idrv') ?? findUsSectorChange('自动驾驶'),
           'nuclear': () => findUsSectorChange('gb_ura') ?? findUsSectorChange('核电'),
           'grid': () => findUsSectorChange('gb_xlu') ?? findUsSectorChange('电网'),
           'defense': () => findUsSectorChange('gb_ita') ?? findUsSectorChange('军工'),
@@ -464,7 +612,7 @@ export class MarketDataService {
           krComp.badge = '韩国 · 已更新'
           krComp.badgeColor = 'live'
         }
-        const kospi = indicesList.find((x: any) => x.code === 'int_kospi' || x.name.includes('韩国'))
+        const kospi = indicesList.find(x => x.code === 'int_kospi' || (x.name && x.name.includes('韩国')))
         if (kospi) {
           const p = parseGccPercent(kospi.changePercent)
           if (p !== undefined) {
@@ -487,12 +635,12 @@ export class MarketDataService {
           krInd.badgeColor = 'live'
         }
         const krMap: Record<string, () => number | undefined> = {
-          'kr-memory': () => findUsSectorChange('gb_smh'),
-          'kr-semi': () => findUsSectorChange('gb_soxx'),
+          'kr-memory': () => findStockChange('int_skHynix') ?? findUsSectorChange('gb_smh'),
+          'kr-semi': () => findStockChange('int_samsung') ?? findUsSectorChange('gb_soxx'),
           'kr-battery': () => findUsSectorChange('gb_lit'),
           'kr-electronics': () => findCnSectorChange('cn_chip'),
           'kr-internet': () => findCnSectorChange('cn_internet'),
-          'kr-auto': () => findUsSectorChange('gb_idrv'),
+          'kr-auto': () => findStockChange('gb_tsla') ?? findUsSectorChange('gb_idrv'),
           'kr-bio': () => findUsSectorChange('gb_xbi'),
           'kr-chem': () => findCnSectorChange('cn_material')
         }
@@ -515,8 +663,8 @@ export class MarketDataService {
           jpComp.badge = '日本 · 已更新'
           jpComp.badgeColor = 'live'
         }
-        const nikkei = indicesList.find((x: any) => x.code === 'int_nikkei' || x.name.includes('日经'))
-        const topix = indicesList.find((x: any) => x.code === 'int_topix' || x.name.includes('东证'))
+        const nikkei = indicesList.find(x => x.code === 'int_nikkei' || (x.name && x.name.includes('日经')))
+        const topix = indicesList.find(x => x.code === 'int_topix' || (x.name && x.name.includes('东证')))
         if (nikkei) {
           const item = jpComp.items.find(i => i.id === 'nikkei225')
           if (item) item.changePercent = parseGccPercent(nikkei.changePercent) ?? item.changePercent
@@ -541,11 +689,11 @@ export class MarketDataService {
           'jp-semiequip': () => findUsSectorChange('gb_soxx'),
           'jp-automation': () => findUsSectorChange('gb_botz'),
           'jp-precision': () => findCnSectorChange('cn_industrial'),
-          'jp-auto': () => findUsSectorChange('gb_idrv'),
-          'jp-electronics': () => findCnSectorChange('cn_chip'),
+          'jp-auto': () => findStockChange('int_toyota') ?? findUsSectorChange('gb_idrv'),
+          'jp-electronics': () => findStockChange('int_sony') ?? findCnSectorChange('cn_chip'),
           'jp-semimat': () => findCnSectorChange('cn_material'),
           'jp-components': () => findCnSectorChange('cn_kc50'),
-          'jp-gaming': () => findCnSectorChange('cn_internet')
+          'jp-gaming': () => findStockChange('int_sony') ?? findCnSectorChange('cn_internet')
         }
         jpInd.items.forEach(item => {
           const res = jpMap[item.id]
@@ -561,8 +709,8 @@ export class MarketDataService {
       if (asiaComp) {
         asiaComp.badge = '亚洲 · 已更新'
         asiaComp.badgeColor = 'live'
-        const hsi = indicesList.find((x: any) => x.code === 'rt_hkHSI')
-        const hscei = indicesList.find((x: any) => x.code === 'rt_hkHSCEI')
+        const hsi = indicesList.find(x => x.code === 'rt_hkHSI')
+        const hscei = indicesList.find(x => x.code === 'rt_hkHSCEI')
         asiaComp.items.forEach(item => {
           if (item.id === 'vnindex') {
             const val = findCnSectorChange('cn_growth') ?? (hsi ? parseGccPercent(hsi.changePercent) : undefined)
@@ -585,9 +733,9 @@ export class MarketDataService {
           forexSection.badgeColor = 'live'
         }
 
-        const usdjpy = forexList.find((x: any) => x.code === 'fx_susdjpy')
-        const jpycny = forexList.find((x: any) => x.code === 'fx_sjpycny')
-        const usdcny = forexList.find((x: any) => x.code === 'fx_susdcny')
+        const usdjpy = forexList.find(x => x.code === 'fx_susdjpy')
+        const jpycny = forexList.find(x => x.code === 'fx_sjpycny')
+        const usdcny = forexList.find(x => x.code === 'fx_susdcny')
 
         forexSection.items.forEach(item => {
           if (item.id === 'usd-jpy' && usdjpy) {
@@ -626,10 +774,10 @@ export class MarketDataService {
 
         goldSilver.items.forEach(item => {
           if (item.id === 'm-gold') {
-            const m = metalsList.find((x: any) => x.code === 'hf_GC' || x.name === '黄金')
+            const m = metalsList.find(x => x.code === 'hf_GC' || x.name === '黄金')
             if (m) item.changePercent = parseGccPercent(m.changePercent) ?? item.changePercent
           } else if (item.id === 'm-silver') {
-            const m = metalsList.find((x: any) => x.code === 'hf_SI' || x.name === '白银')
+            const m = metalsList.find(x => x.code === 'hf_SI' || x.name === '白银')
             if (m) item.changePercent = parseGccPercent(m.changePercent) ?? item.changePercent
           }
         })
@@ -656,7 +804,7 @@ export class MarketDataService {
         industrial.items.forEach(item => {
           const targetCode = metalCodeMap[item.id]
           if (targetCode) {
-            const m = metalsList.find((x: any) => x.code === targetCode)
+            const m = metalsList.find(x => x.code === targetCode)
             if (m) item.changePercent = parseGccPercent(m.changePercent) ?? item.changePercent
           }
         })
@@ -670,7 +818,7 @@ export class MarketDataService {
 
         const remxVal = findUsSectorChange('gb_remx') ?? -0.27
         const cperVal = findUsSectorChange('gb_cper') ?? 1.60
-        const ptMetal = metalsList.find((x: any) => x.code === 'hf_XPT')
+        const ptMetal = metalsList.find(x => x.code === 'hf_XPT')
         const ptVal = ptMetal ? parseGccPercent(ptMetal.changePercent) : remxVal
 
         otherMetals.items.forEach(item => {
@@ -697,7 +845,7 @@ export class MarketDataService {
 
         aiProducts.items.forEach(item => {
           if (item.id === 'ai-cloud-compute') {
-            item.changePercent = findUsSectorChange('gb_igv') ?? -0.32
+            item.changePercent = findStockChange('gb_amzn') ?? findUsSectorChange('gb_igv') ?? -0.32
           } else if (item.id === 'ai-token') {
             item.changePercent = findCnSectorChange('cn_ai') ?? -0.41
           }
@@ -714,10 +862,10 @@ export class MarketDataService {
           aiHardware.badgeColor = 'live'
         }
 
-        const memVal = findUsSectorChange('gb_smh') ?? 0.17
+        const memVal = findStockChange('int_skHynix') ?? findUsSectorChange('gb_smh') ?? 0.17
         const semiVal = findUsSectorChange('gb_soxx') ?? 0.66
         const chipVal = findCnSectorChange('cn_chip') ?? -0.64
-        const aiVal = findCnSectorChange('cn_ai') ?? -0.41
+        const aiVal = findStockChange('gb_nvda') ?? findCnSectorChange('cn_ai') ?? -0.41
         const gridVal = findUsSectorChange('gb_xlu') ?? -1.21
         const cloudVal = findUsSectorChange('gb_igv') ?? -0.32
 
