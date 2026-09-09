@@ -16,6 +16,7 @@ const defaultSettings: UserSettings = {
 const activeTab = ref<TabKey>('global')
 const marketData = ref<Record<string, MarketSection[]>>(MarketDataService.loadData())
 const isRefreshing = ref(false)
+const hasUpdatedOnce = ref(false)
 const lastUpdatedTime = ref<Date>(new Date())
 const countdown = ref(60)
 
@@ -60,6 +61,7 @@ export async function refreshData() {
     lastUpdatedTime.value = new Date()
     settings.lastSyncTime = Date.now()
     countdown.value = settings.refreshInterval
+    hasUpdatedOnce.value = true
   } catch (e) {
     console.error('Failed to refresh data', e)
   } finally {
@@ -172,6 +174,7 @@ export function useMarket() {
     activeTab,
     marketData,
     isRefreshing,
+    hasUpdatedOnce,
     lastUpdatedTime,
     formattedLastUpdated,
     countdown,

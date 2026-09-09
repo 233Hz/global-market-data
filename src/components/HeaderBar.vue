@@ -16,8 +16,8 @@
 
         <!-- Status Dot (Desktop & Tablet) -->
         <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-100/80 dark:bg-white/[0.03] text-xs font-medium text-zinc-600 dark:text-zinc-400">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>{{ currentTabLabel }} · 已更新 ({{ formattedLastUpdated }})</span>
+          <span :class="['w-1.5 h-1.5 rounded-full', hasUpdatedOnce ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500 animate-ping']"></span>
+          <span>{{ currentTabLabel }} · {{ hasUpdatedOnce ? `已更新 (${formattedLastUpdated})` : '初始数据 (正在同步行情...)' }}</span>
         </div>
       </div>
 
@@ -81,8 +81,8 @@
     <!-- Mobile Subheader with Live Status & Countdown -->
     <div class="sm:hidden flex items-center justify-between pt-2 pb-1 text-xs text-zinc-500 dark:text-zinc-400 border-t border-zinc-200/80 dark:border-white/5 mt-2">
       <div class="flex items-center gap-1.5">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span>{{ currentTabLabel }} · 已更新 ({{ formattedLastUpdated }})</span>
+        <span :class="['w-1.5 h-1.5 rounded-full', hasUpdatedOnce ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500 animate-ping']"></span>
+        <span>{{ currentTabLabel }} · {{ hasUpdatedOnce ? `已更新 (${formattedLastUpdated})` : '初始数据 (正在同步...)' }}</span>
       </div>
       <div v-if="settings.autoRefresh" class="text-zinc-500 font-sans text-[11px]">
         {{ countdown }}s 自动刷新
@@ -97,7 +97,7 @@ import { Globe, RotateCw, Compass, Layers, Cpu, Settings, Sun, Moon } from 'luci
 import { useMarket } from '../composables/useMarket'
 import { TabKey } from '../types/market'
 
-const { activeTab, isRefreshing, formattedLastUpdated, countdown, settings, refreshData, toggleTheme } = useMarket()
+const { activeTab, isRefreshing, hasUpdatedOnce, formattedLastUpdated, countdown, settings, refreshData, toggleTheme } = useMarket()
 
 const tabs = [
   { key: 'global' as TabKey, label: '全球', icon: Globe },
