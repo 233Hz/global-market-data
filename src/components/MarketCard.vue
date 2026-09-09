@@ -1,23 +1,23 @@
 <template>
-  <div class="rounded-lg border border-zinc-200/80 dark:border-white/10 bg-white dark:bg-white/[0.03] p-3.5 md:p-4.5 transition-colors duration-150">
-    <!-- Card Header -->
-    <div class="flex items-center justify-between mb-3">
+  <div class="rounded-lg border-4 border-[#1a1a1a] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] md:shadow-[6px_6px_0px_0px_rgba(26,26,26,1)] bg-[#fffef0] dark:bg-[#202024] p-3.5 md:p-5 transition-all duration-100">
+    <!-- Card Header (Manga Panel Title) -->
+    <div class="flex items-center justify-between mb-3.5">
       <div class="flex items-center gap-2">
-        <h3 class="font-sans font-semibold tracking-tight text-sm md:text-base text-zinc-900 dark:text-white">
+        <h3 class="font-black uppercase tracking-wide text-base md:text-lg text-[#1a1a1a] dark:text-white">
           {{ title }}
         </h3>
       </div>
 
-      <!-- Optional Badge -->
+      <!-- Comic Badge / Speech Tag -->
       <span
         v-if="badge"
         :class="[
-          'text-[11px] px-2 py-0.5 rounded border font-medium tracking-tight',
+          'text-[11px] px-2.5 py-0.5 rounded-lg border-2 border-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] font-black uppercase tracking-wider',
           badgeColor === 'live'
-            ? 'border-emerald-500/30 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
+            ? 'bg-[#22c55e] text-[#1a1a1a]'
             : badgeColor === 'closed'
-            ? 'border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800/40'
-            : 'border-rose-500/30 text-rose-600 dark:text-rose-400 bg-rose-500/10'
+            ? 'bg-[#facc15] text-[#1a1a1a]'
+            : 'bg-white dark:bg-[#2b2b30] text-[#1a1a1a] dark:text-white'
         ]"
       >
         {{ badge }}
@@ -56,14 +56,14 @@ const props = withDefaults(
 const gridClass = computed(() => {
   switch (props.columns) {
     case 6:
-      return 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2'
+      return 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5'
     case 4:
-      return 'grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2.5'
+      return 'grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3'
     case 3:
-      return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5'
+      return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3'
     case 2:
     default:
-      return 'grid grid-cols-2 gap-2.5'
+      return 'grid grid-cols-2 gap-3'
   }
 })
 </script>

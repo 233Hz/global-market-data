@@ -1,11 +1,11 @@
 <template>
-  <div class="min-h-screen bg-[#f8f9fa] dark:bg-[#0a0a0b] text-zinc-900 dark:text-white flex flex-col selection:bg-[#5e6ad2]/30 selection:text-white transition-colors duration-150">
+  <div class="min-h-screen bg-[#fffef0] dark:bg-[#121212] comic-dots text-[#1a1a1a] dark:text-[#f4f4f5] flex flex-col selection:bg-[#facc15] selection:text-[#1a1a1a] transition-colors duration-100 font-sans">
     <!-- Top Navigation / Header -->
     <HeaderBar />
 
-    <!-- Main Content Canvas: max-w-7xl allows high-density layout on PC -->
+    <!-- Main Content Canvas: max-w-7xl allows high-density layout on PC with comic framing -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 md:px-8 pt-5 md:pt-7 pb-24 md:pb-12">
-      <Transition name="fade" mode="out-in">
+      <Transition name="comic-fade" mode="out-in">
         <KeepAlive>
           <component :is="currentView" />
         </KeepAlive>
@@ -54,13 +54,18 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.15s ease;
+.comic-fade-enter-active,
+.comic-fade-leave-active {
+  transition: opacity 0.1s ease, transform 0.1s ease;
 }
 
-.fade-enter-from,
-.fade-leave-to {
+.comic-fade-enter-from {
   opacity: 0;
+  transform: scale(0.98);
+}
+
+.comic-fade-leave-to {
+  opacity: 0;
+  transform: scale(1.01);
 }
 </style>

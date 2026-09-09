@@ -1,20 +1,20 @@
 <template>
   <div
-    class="rounded-lg border border-zinc-200/80 dark:border-white/10 bg-zinc-50/70 dark:bg-white/[0.02] hover:bg-zinc-100/90 dark:hover:bg-white/[0.05] transition-colors duration-150 p-2.5 md:p-3 flex flex-col justify-between"
+    class="rounded-lg border-2 border-[#1a1a1a] shadow-[3px_3px_0px_0px_rgba(26,26,26,1)] bg-white dark:bg-[#28282d] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none transition-all duration-100 p-2.5 md:p-3 flex flex-col justify-between group"
   >
     <!-- Case 1: Item with distinct Price (e.g. Macro commodities, Forex) -->
     <template v-if="item.price !== undefined">
-      <div class="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400 font-medium tracking-tight">
-        <span class="truncate pr-1">{{ item.name }}</span>
-        <span :class="['font-semibold text-xs tracking-tight', trend.textClass]">
+      <div class="flex items-center justify-between text-xs font-black uppercase tracking-tight mb-1.5">
+        <span class="truncate pr-1 text-[#4a4a4a] dark:text-zinc-300">{{ item.name }}</span>
+        <span :class="['px-1.5 py-0.5 rounded font-mono font-black text-[11px] tracking-tight', trend.badgeClass]">
           {{ trend.formattedPercent }}
         </span>
       </div>
-      <div class="mt-1.5 flex items-baseline justify-between">
-        <span class="text-sm md:text-base font-semibold text-zinc-900 dark:text-white font-sans tracking-tight">
+      <div class="flex items-baseline justify-between">
+        <span class="text-sm md:text-base font-mono font-black text-[#1a1a1a] dark:text-white tracking-tight">
           {{ item.price }}
         </span>
-        <span v-if="item.unit" class="text-[11px] text-zinc-400 dark:text-zinc-500 font-normal">
+        <span v-if="item.unit" class="text-[10px] text-[#4a4a4a] dark:text-zinc-400 font-bold uppercase">
           {{ item.unit }}
         </span>
       </div>
@@ -25,11 +25,11 @@
       <div class="flex items-center justify-between py-0.5">
         <div class="flex items-center gap-1.5 md:gap-2 min-w-0 pr-1.5">
           <span v-if="item.icon" class="text-xs md:text-sm select-none flex-shrink-0 leading-none">{{ item.icon }}</span>
-          <span class="font-sans text-xs md:text-sm font-medium text-zinc-900 dark:text-white truncate tracking-tight">
+          <span class="font-black text-xs md:text-sm text-[#1a1a1a] dark:text-white truncate tracking-tight uppercase">
             {{ item.name }}
           </span>
         </div>
-        <span :class="['font-sans font-semibold text-xs md:text-sm whitespace-nowrap tracking-tight', trend.textClass]">
+        <span :class="['px-2 py-0.5 rounded font-mono font-black text-xs whitespace-nowrap tracking-tight', trend.badgeClass]">
           {{ trend.formattedPercent }}
         </span>
       </div>

@@ -148,24 +148,32 @@ export function useMarket() {
       isRed = isDown
     }
 
-    let textClass = 'text-zinc-400 dark:text-zinc-400'
+    let textClass = 'text-[#1a1a1a] dark:text-zinc-300'
+    let badgeClass = 'bg-[#facc15] text-[#1a1a1a] border-2 border-[#1a1a1a] shadow-[1.5px_1.5px_0px_0px_rgba(26,26,26,1)]'
     let arrow = '—'
     let sign = ''
 
     if (isUp) {
       arrow = '▲'
       sign = '+'
-      textClass = isRed ? 'text-rose-500 dark:text-rose-400' : 'text-emerald-500 dark:text-emerald-400'
+      textClass = isRed ? 'text-[#ef4444]' : 'text-[#22c55e]'
+      badgeClass = isRed
+        ? 'bg-[#ef4444] text-white border-2 border-[#1a1a1a] shadow-[1.5px_1.5px_0px_0px_rgba(26,26,26,1)]'
+        : 'bg-[#22c55e] text-[#1a1a1a] border-2 border-[#1a1a1a] shadow-[1.5px_1.5px_0px_0px_rgba(26,26,26,1)]'
     } else if (isDown) {
       arrow = '▼'
       sign = ''
-      textClass = isGreen ? 'text-emerald-500 dark:text-emerald-400' : 'text-rose-500 dark:text-rose-400'
+      textClass = isGreen ? 'text-[#22c55e]' : 'text-[#ef4444]'
+      badgeClass = isGreen
+        ? 'bg-[#22c55e] text-[#1a1a1a] border-2 border-[#1a1a1a] shadow-[1.5px_1.5px_0px_0px_rgba(26,26,26,1)]'
+        : 'bg-[#ef4444] text-white border-2 border-[#1a1a1a] shadow-[1.5px_1.5px_0px_0px_rgba(26,26,26,1)]'
     }
 
     return {
       arrow,
       sign,
       textClass,
+      badgeClass,
       formattedPercent: `${arrow} ${sign}${changePercent.toFixed(2)}%`
     }
   }

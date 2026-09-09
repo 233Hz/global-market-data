@@ -1,146 +1,144 @@
 <template>
-  <div class="space-y-3.5 md:space-y-4 max-w-2xl mx-auto">
+  <div class="space-y-4 md:space-y-6 max-w-3xl mx-auto">
     <!-- Card 0: 主题外观 (亮色 / 暗色) -->
-    <div class="rounded-lg border border-zinc-200/80 dark:border-white/10 bg-white dark:bg-white/[0.03] p-3.5 md:p-5 transition-colors duration-150">
-      <h3 class="font-sans font-semibold tracking-tight text-sm md:text-base text-zinc-900 dark:text-white mb-1">
-        界面主题外观
+    <div class="rounded-lg border-4 border-[#1a1a1a] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] md:shadow-[6px_6px_0px_0px_rgba(26,26,26,1)] bg-[#fffef0] dark:bg-[#202024] p-4 md:p-6 transition-all duration-100">
+      <h3 class="font-black uppercase tracking-wide text-base md:text-lg text-[#1a1a1a] dark:text-white mb-1">
+        🎨 界面主题外观
       </h3>
-      <p class="text-xs text-zinc-500 dark:text-zinc-400 mb-3.5">
-        自由切换暗黑极简与明亮雅致风格，兼具高对比度与专业看盘体验。
+      <p class="text-xs text-[#4a4a4a] dark:text-zinc-400 font-bold mb-4">
+        自由切换漫画米白复古纸张与暗黑墨感风格，浓重墨线与硬边印刷阴影始终如一。
       </p>
 
-      <div class="grid grid-cols-2 gap-3">
-        <button
-          @click="settings.theme = 'dark'"
-          :class="[
-            'p-3.5 rounded-lg border text-left transition-all duration-150',
-            settings.theme === 'dark'
-              ? 'border-[#5e6ad2] bg-[#5e6ad2]/10 text-white'
-              : 'border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-zinc-700 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
-          ]"
-        >
-          <div class="flex items-center justify-between mb-1">
-            <span class="font-medium text-sm text-zinc-900 dark:text-white flex items-center gap-1.5">
-              <Moon class="w-3.5 h-3.5 text-[#8b5cf6]" /> 暗色模式 (默认)
-            </span>
-            <span v-if="settings.theme === 'dark'" class="w-2 h-2 rounded-full bg-[#8b5cf6]"></span>
-          </div>
-          <p class="text-xs text-zinc-500 dark:text-zinc-400">极简纯黑背景，减少眼部疲劳</p>
-        </button>
-
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
         <button
           @click="settings.theme = 'light'"
           :class="[
-            'p-3.5 rounded-lg border text-left transition-all duration-150',
+            'p-4 rounded-lg border-3 border-[#1a1a1a] text-left transition-all duration-100',
             settings.theme === 'light'
-              ? 'border-[#5e6ad2] bg-[#5e6ad2]/10 text-zinc-900'
-              : 'border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-zinc-700 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+              ? 'bg-[#facc15] text-[#1a1a1a] shadow-[3px_3px_0px_0px_rgba(26,26,26,1)]'
+              : 'bg-white dark:bg-[#2a2a2f] text-[#1a1a1a] dark:text-zinc-200 shadow-[3px_3px_0px_0px_rgba(26,26,26,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] active:shadow-none'
           ]"
         >
-          <div class="flex items-center justify-between mb-1">
-            <span class="font-medium text-sm text-zinc-900 dark:text-white flex items-center gap-1.5">
-              <Sun class="w-3.5 h-3.5 text-amber-500" /> 亮色模式
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="font-black uppercase text-sm text-[#1a1a1a] flex items-center gap-1.5">
+              <Sun class="w-4 h-4 stroke-[2.5] text-amber-500" /> 亮色模式 · 漫画纸张
             </span>
-            <span v-if="settings.theme === 'light'" class="w-2 h-2 rounded-full bg-[#8b5cf6]"></span>
+            <span v-if="settings.theme === 'light'" class="w-3 h-3 rounded-sm bg-[#ef4444] border border-[#1a1a1a]"></span>
           </div>
-          <p class="text-xs text-zinc-500 dark:text-zinc-400">明亮素净基调，日间清晰悦目</p>
+          <p class="text-xs text-[#4a4a4a] font-bold">经典米白纸质底纹，还原日漫出版物触感</p>
+        </button>
+
+        <button
+          @click="settings.theme = 'dark'"
+          :class="[
+            'p-4 rounded-lg border-3 border-[#1a1a1a] text-left transition-all duration-100',
+            settings.theme === 'dark'
+              ? 'bg-[#facc15] text-[#1a1a1a] shadow-[3px_3px_0px_0px_rgba(26,26,26,1)]'
+              : 'bg-white dark:bg-[#2a2a2f] text-[#1a1a1a] dark:text-zinc-200 shadow-[3px_3px_0px_0px_rgba(26,26,26,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] active:shadow-none'
+          ]"
+        >
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="font-black uppercase text-sm text-[#1a1a1a] flex items-center gap-1.5">
+              <Moon class="w-4 h-4 stroke-[2.5] text-[#1a1a1a]" /> 暗色模式 · 深墨黑底
+            </span>
+            <span v-if="settings.theme === 'dark'" class="w-3 h-3 rounded-sm bg-[#ef4444] border border-[#1a1a1a]"></span>
+          </div>
+          <p class="text-xs text-[#4a4a4a] font-bold">高对比度深色背景，夜间看盘沉浸护眼</p>
         </button>
       </div>
     </div>
 
     <!-- Card 1: 涨跌配色偏好 -->
-    <div class="rounded-lg border border-zinc-200/80 dark:border-white/10 bg-white dark:bg-white/[0.03] p-3.5 md:p-5 transition-colors duration-150">
-      <h3 class="font-sans font-semibold tracking-tight text-sm md:text-base text-zinc-900 dark:text-white mb-1">
-        涨跌色彩模式
+    <div class="rounded-lg border-4 border-[#1a1a1a] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] md:shadow-[6px_6px_0px_0px_rgba(26,26,26,1)] bg-[#fffef0] dark:bg-[#202024] p-4 md:p-6 transition-all duration-100">
+      <h3 class="font-black uppercase tracking-wide text-base md:text-lg text-[#1a1a1a] dark:text-white mb-1">
+        📈 涨跌色彩模式
       </h3>
-      <p class="text-xs text-zinc-500 dark:text-zinc-400 mb-3.5">
+      <p class="text-xs text-[#4a4a4a] dark:text-zinc-400 font-bold mb-4">
         根据您的看盘习惯设定涨跌展示颜色，始终辅以 ▲ / ▼ 明确方向。
       </p>
 
-      <div class="grid grid-cols-2 gap-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
         <button
           @click="settings.colorMode = 'cn'"
           :class="[
-            'p-3.5 rounded-lg border text-left transition-all duration-150',
+            'p-4 rounded-lg border-3 border-[#1a1a1a] text-left transition-all duration-100',
             settings.colorMode === 'cn'
-              ? 'border-[#5e6ad2] bg-[#5e6ad2]/10 text-zinc-900 dark:text-white'
-              : 'border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-zinc-700 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+              ? 'bg-[#facc15] text-[#1a1a1a] shadow-[3px_3px_0px_0px_rgba(26,26,26,1)]'
+              : 'bg-white dark:bg-[#2a2a2f] text-[#1a1a1a] dark:text-zinc-200 shadow-[3px_3px_0px_0px_rgba(26,26,26,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] active:shadow-none'
           ]"
         >
-          <div class="flex items-center justify-between mb-1.5">
-            <span class="font-medium text-sm text-zinc-900 dark:text-white">国内习惯 (默认)</span>
-            <span v-if="settings.colorMode === 'cn'" class="w-2 h-2 rounded-full bg-[#8b5cf6]"></span>
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-black uppercase text-sm text-[#1a1a1a]">国内习惯 (红涨绿跌)</span>
+            <span v-if="settings.colorMode === 'cn'" class="w-3 h-3 rounded-sm bg-[#ef4444] border border-[#1a1a1a]"></span>
           </div>
-          <div class="flex items-center gap-2 text-xs font-semibold">
-            <span class="text-rose-500 dark:text-rose-400">▲ 上涨 (红)</span>
-            <span class="text-zinc-400">/</span>
-            <span class="text-emerald-500 dark:text-emerald-400">▼ 下跌 (绿)</span>
+          <div class="flex items-center gap-2 text-xs font-mono font-black">
+            <span class="px-2 py-0.5 rounded bg-[#ef4444] text-white border border-[#1a1a1a]">▲ 上涨 (红)</span>
+            <span class="text-[#1a1a1a]">/</span>
+            <span class="px-2 py-0.5 rounded bg-[#22c55e] text-[#1a1a1a] border border-[#1a1a1a]">▼ 下跌 (绿)</span>
           </div>
         </button>
 
         <button
           @click="settings.colorMode = 'global'"
           :class="[
-            'p-3.5 rounded-lg border text-left transition-all duration-150',
+            'p-4 rounded-lg border-3 border-[#1a1a1a] text-left transition-all duration-100',
             settings.colorMode === 'global'
-              ? 'border-[#5e6ad2] bg-[#5e6ad2]/10 text-zinc-900 dark:text-white'
-              : 'border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-zinc-700 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+              ? 'bg-[#facc15] text-[#1a1a1a] shadow-[3px_3px_0px_0px_rgba(26,26,26,1)]'
+              : 'bg-white dark:bg-[#2a2a2f] text-[#1a1a1a] dark:text-zinc-200 shadow-[3px_3px_0px_0px_rgba(26,26,26,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] active:shadow-none'
           ]"
         >
-          <div class="flex items-center justify-between mb-1.5">
-            <span class="font-medium text-sm text-zinc-900 dark:text-white">国际惯例</span>
-            <span v-if="settings.colorMode === 'global'" class="w-2 h-2 rounded-full bg-[#8b5cf6]"></span>
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-black uppercase text-sm text-[#1a1a1a]">国际惯例 (绿涨红跌)</span>
+            <span v-if="settings.colorMode === 'global'" class="w-3 h-3 rounded-sm bg-[#ef4444] border border-[#1a1a1a]"></span>
           </div>
-          <div class="flex items-center gap-2 text-xs font-semibold">
-            <span class="text-emerald-500 dark:text-emerald-400">▲ 上涨 (绿)</span>
-            <span class="text-zinc-400">/</span>
-            <span class="text-rose-500 dark:text-rose-400">▼ 下跌 (红)</span>
+          <div class="flex items-center gap-2 text-xs font-mono font-black">
+            <span class="px-2 py-0.5 rounded bg-[#22c55e] text-[#1a1a1a] border border-[#1a1a1a]">▲ 上涨 (绿)</span>
+            <span class="text-[#1a1a1a]">/</span>
+            <span class="px-2 py-0.5 rounded bg-[#ef4444] text-white border border-[#1a1a1a]">▼ 下跌 (红)</span>
           </div>
         </button>
       </div>
     </div>
 
     <!-- Card 2: 自动刷新设置 -->
-    <div class="rounded-lg border border-zinc-200/80 dark:border-white/10 bg-white dark:bg-white/[0.03] p-3.5 md:p-5 transition-colors duration-150">
+    <div class="rounded-lg border-4 border-[#1a1a1a] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] md:shadow-[6px_6px_0px_0px_rgba(26,26,26,1)] bg-[#fffef0] dark:bg-[#202024] p-4 md:p-6 transition-all duration-100">
       <div class="flex items-center justify-between mb-1">
-        <h3 class="font-sans font-semibold tracking-tight text-sm md:text-base text-zinc-900 dark:text-white">
-          自动更新行情
+        <h3 class="font-black uppercase tracking-wide text-base md:text-lg text-[#1a1a1a] dark:text-white">
+          ⚡ 自动更新行情
         </h3>
-        <!-- Linear toggle switch -->
+        <!-- Comic Toggle Switch -->
         <button
           @click="settings.autoRefresh = !settings.autoRefresh"
           :class="[
-            'w-11 h-6 rounded-full border transition-colors duration-150 relative focus:outline-none',
-            settings.autoRefresh
-              ? 'bg-[#5e6ad2] border-[#5e6ad2]'
-              : 'bg-zinc-200 dark:bg-white/[0.06] border-zinc-300 dark:border-white/10'
+            'w-13 h-7 rounded-lg border-3 border-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] relative transition-colors duration-100 focus:outline-none',
+            settings.autoRefresh ? 'bg-[#22c55e]' : 'bg-zinc-300 dark:bg-zinc-700'
           ]"
         >
           <span
             :class="[
-              'block w-4 h-4 rounded-full bg-white transition-transform duration-150 transform',
-              settings.autoRefresh ? 'translate-x-5' : 'translate-x-1'
+              'block w-5 h-5 rounded-md bg-white border-2 border-[#1a1a1a] transition-transform duration-100 transform',
+              settings.autoRefresh ? 'translate-x-6' : 'translate-x-1'
             ]"
           ></span>
         </button>
       </div>
-      <p class="text-xs text-zinc-500 dark:text-zinc-400 mb-3.5">
-        是否在后台定时拉取最新市场行情数据。
+      <p class="text-xs text-[#4a4a4a] dark:text-zinc-400 font-bold mb-4">
+        是否在后台定时拉取最新市场行情数据（已对接 GCC 官方后端）。
       </p>
 
       <!-- Refresh interval options -->
-      <div v-if="settings.autoRefresh" class="space-y-2 pt-2 border-t border-zinc-200/60 dark:border-white/5">
-        <label class="block text-xs font-medium text-zinc-600 dark:text-zinc-400">刷新频率间隔</label>
-        <div class="grid grid-cols-3 gap-2">
+      <div v-if="settings.autoRefresh" class="space-y-2 pt-3 border-t-2 border-[#1a1a1a]">
+        <label class="block text-xs font-black uppercase text-[#1a1a1a] dark:text-zinc-300">刷新频率间隔</label>
+        <div class="grid grid-cols-3 gap-2.5">
           <button
             v-for="opt in intervalOptions"
             :key="opt.value"
             @click="settings.refreshInterval = opt.value"
             :class="[
-              'py-2 px-3 rounded-lg border text-center text-xs font-medium transition-all duration-150',
+              'py-2 px-3 rounded-lg border-2 border-[#1a1a1a] text-center text-xs font-black uppercase transition-all duration-100',
               settings.refreshInterval === opt.value
-                ? 'border-[#5e6ad2] bg-[#5e6ad2]/15 text-zinc-900 dark:text-white'
-                : 'border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+                ? 'bg-[#facc15] text-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]'
+                : 'bg-white dark:bg-[#2a2a2f] text-[#1a1a1a] dark:text-zinc-300 shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] hover:translate-x-[1px] hover:translate-y-[1px]'
             ]"
           >
             {{ opt.label }}
@@ -150,167 +148,167 @@
     </div>
 
     <!-- Card 3: 行情数据维护 -->
-    <div class="rounded-lg border border-zinc-200/80 dark:border-white/10 bg-white dark:bg-white/[0.03] p-3.5 md:p-5 transition-colors duration-150">
-      <h3 class="font-sans font-semibold tracking-tight text-sm md:text-base text-zinc-900 dark:text-white mb-1">
-        数据同步与维护
+    <div class="rounded-lg border-4 border-[#1a1a1a] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] md:shadow-[6px_6px_0px_0px_rgba(26,26,26,1)] bg-[#fffef0] dark:bg-[#202024] p-4 md:p-6 transition-all duration-100">
+      <h3 class="font-black uppercase tracking-wide text-base md:text-lg text-[#1a1a1a] dark:text-white mb-1">
+        🛠️ 数据同步与维护
       </h3>
-      <p class="text-xs text-zinc-500 dark:text-zinc-400 mb-3.5">
-        手动触发接口拉取或清理浏览器缓存以重新拉取基准行情。
+      <p class="text-xs text-[#4a4a4a] dark:text-zinc-400 font-bold mb-4">
+        手动触发官方后端同步或清理浏览器缓存以重新加载基准状态。
       </p>
 
-      <div class="flex flex-col sm:flex-row gap-2.5">
+      <div class="flex flex-col sm:flex-row gap-3">
         <button
           @click="refreshData"
           :disabled="isRefreshing"
           :class="[
-            'rounded-lg font-medium text-sm transition-opacity duration-150 px-4 py-2 bg-gradient-to-r from-[#5e6ad2] to-[#8b5cf6] text-white flex items-center justify-center gap-2',
-            isRefreshing ? 'opacity-60 cursor-not-allowed' : 'hover:opacity-90'
+            'rounded-lg font-black uppercase text-sm px-5 py-2.5 border-3 border-[#1a1a1a] shadow-[3px_3px_0px_0px_rgba(26,26,26,1)] bg-[#3b82f6] text-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none flex items-center justify-center gap-2 transition-all duration-100',
+            isRefreshing ? 'opacity-60 cursor-not-allowed' : ''
           ]"
         >
-          <RotateCw :class="['w-4 h-4', isRefreshing ? 'animate-spin' : '']" />
+          <RotateCw :class="['w-4 h-4 stroke-[2.5]', isRefreshing ? 'animate-spin' : '']" />
           <span>{{ isRefreshing ? '正在同步行情...' : '立即同步最新数据' }}</span>
         </button>
 
         <button
           @click="handleResetCache"
-          class="rounded-lg font-medium text-sm transition-all duration-150 px-4 py-2 bg-zinc-100 dark:bg-white/[0.03] text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-white/10 hover:bg-zinc-200/80 dark:hover:bg-white/[0.08] flex items-center justify-center gap-2"
+          class="rounded-lg font-black uppercase text-sm px-5 py-2.5 border-3 border-[#1a1a1a] shadow-[3px_3px_0px_0px_rgba(26,26,26,1)] bg-[#ef4444] text-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none flex items-center justify-center gap-2 transition-all duration-100"
         >
-          <Trash2 class="w-4 h-4 text-zinc-400" />
-          <span>重置并清空缓存</span>
+          <Trash2 class="w-4 h-4 stroke-[2.5]" />
+          <span>重置并清空本地缓存</span>
         </button>
       </div>
 
-      <p v-if="cacheResetMsg" class="text-xs text-emerald-500 dark:text-emerald-400 mt-2">
-        {{ cacheResetMsg }}
+      <p v-if="cacheResetMsg" class="text-xs font-black uppercase text-[#22c55e] mt-3">
+        ✓ {{ cacheResetMsg }}
       </p>
     </div>
 
     <!-- Card 4: 权威财经网页实时对比 -->
-    <div class="rounded-lg border border-zinc-200/80 dark:border-white/10 bg-white dark:bg-white/[0.03] p-3.5 md:p-5 transition-colors duration-150">
-      <h3 class="font-sans font-semibold tracking-tight text-sm md:text-base text-zinc-900 dark:text-white mb-1">
-        权威财经网页实时对比
+    <div class="rounded-lg border-4 border-[#1a1a1a] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] md:shadow-[6px_6px_0px_0px_rgba(26,26,26,1)] bg-[#fffef0] dark:bg-[#202024] p-4 md:p-6 transition-all duration-100">
+      <h3 class="font-black uppercase tracking-wide text-base md:text-lg text-[#1a1a1a] dark:text-white mb-1">
+        🔗 权威财经行情核对
       </h3>
-      <p class="text-xs text-zinc-500 dark:text-zinc-400 mb-3.5">
-        点击可在新标签页直接打开对应权威财经行情页面，对比走势图与即时点位。
+      <p class="text-xs text-[#4a4a4a] dark:text-zinc-400 font-bold mb-4">
+        点击在新标签页打开权威财经行情页面，对比真实大盘与商品走势图。
       </p>
 
-      <div class="space-y-3">
+      <div class="space-y-3.5">
         <!-- 宏观与大宗商品 -->
         <div>
-          <span class="text-[11px] font-medium text-zinc-500 uppercase tracking-wider block mb-1.5">全球大宗商品与宏观</span>
-          <div class="flex flex-wrap gap-2">
+          <span class="text-xs font-black uppercase text-[#1a1a1a] dark:text-zinc-300 block mb-2">全球大宗商品与宏观</span>
+          <div class="flex flex-wrap gap-2.5">
             <a
               href="https://finance.sina.com.cn/futures/quotes/OIL.shtml"
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-[#5e6ad2]"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] bg-white dark:bg-[#2b2b30] text-xs font-black text-[#1a1a1a] dark:text-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_rgba(26,26,26,1)] active:shadow-none transition-all duration-100"
             >
               <span>布伦特原油 (新浪财经)</span>
-              <ExternalLink class="w-3 h-3 text-zinc-400" />
+              <ExternalLink class="w-3.5 h-3.5 stroke-[2.5]" />
             </a>
             <a
               href="https://finance.sina.com.cn/futures/quotes/GC.shtml"
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-[#5e6ad2]"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] bg-white dark:bg-[#2b2b30] text-xs font-black text-[#1a1a1a] dark:text-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_rgba(26,26,26,1)] active:shadow-none transition-all duration-100"
             >
               <span>COMEX黄金 (新浪财经)</span>
-              <ExternalLink class="w-3 h-3 text-zinc-400" />
+              <ExternalLink class="w-3.5 h-3.5 stroke-[2.5]" />
             </a>
             <a
               href="https://finance.sina.com.cn/futures/quotes/SI.shtml"
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-[#5e6ad2]"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] bg-white dark:bg-[#2b2b30] text-xs font-black text-[#1a1a1a] dark:text-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_rgba(26,26,26,1)] active:shadow-none transition-all duration-100"
             >
               <span>COMEX白银 (新浪财经)</span>
-              <ExternalLink class="w-3 h-3 text-zinc-400" />
+              <ExternalLink class="w-3.5 h-3.5 stroke-[2.5]" />
             </a>
             <a
               href="https://xueqiu.com/S/TLT"
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-[#5e6ad2]"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] bg-white dark:bg-[#2b2b30] text-xs font-black text-[#1a1a1a] dark:text-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_rgba(26,26,26,1)] active:shadow-none transition-all duration-100"
             >
               <span>美债长债 TLT (雪球)</span>
-              <ExternalLink class="w-3 h-3 text-zinc-400" />
+              <ExternalLink class="w-3.5 h-3.5 stroke-[2.5]" />
             </a>
           </div>
         </div>
 
         <!-- 汇率牌价 -->
         <div>
-          <span class="text-[11px] font-medium text-zinc-500 uppercase tracking-wider block mb-1.5">全球外汇牌价</span>
-          <div class="flex flex-wrap gap-2">
+          <span class="text-xs font-black uppercase text-[#1a1a1a] dark:text-zinc-300 block mb-2">全球外汇牌价</span>
+          <div class="flex flex-wrap gap-2.5">
             <a
               href="https://finance.sina.com.cn/money/forex/hq/USDJPY.shtml"
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-[#5e6ad2]"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] bg-white dark:bg-[#2b2b30] text-xs font-black text-[#1a1a1a] dark:text-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_rgba(26,26,26,1)] active:shadow-none transition-all duration-100"
             >
               <span>美元/日元 (新浪外汇)</span>
-              <ExternalLink class="w-3 h-3 text-zinc-400" />
+              <ExternalLink class="w-3.5 h-3.5 stroke-[2.5]" />
             </a>
             <a
               href="https://finance.sina.com.cn/money/forex/hq/CNYJPY.shtml"
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-[#5e6ad2]"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] bg-white dark:bg-[#2b2b30] text-xs font-black text-[#1a1a1a] dark:text-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_rgba(26,26,26,1)] active:shadow-none transition-all duration-100"
             >
               <span>人民币/日元 (新浪外汇)</span>
-              <ExternalLink class="w-3 h-3 text-zinc-400" />
+              <ExternalLink class="w-3.5 h-3.5 stroke-[2.5]" />
             </a>
             <a
               href="https://finance.sina.com.cn/money/forex/hq/USDKRW.shtml"
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-[#5e6ad2]"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] bg-white dark:bg-[#2b2b30] text-xs font-black text-[#1a1a1a] dark:text-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_rgba(26,26,26,1)] active:shadow-none transition-all duration-100"
             >
               <span>美元/韩元 (新浪外汇)</span>
-              <ExternalLink class="w-3 h-3 text-zinc-400" />
+              <ExternalLink class="w-3.5 h-3.5 stroke-[2.5]" />
             </a>
           </div>
         </div>
 
         <!-- 科技与产业龙头 -->
         <div>
-          <span class="text-[11px] font-medium text-zinc-500 uppercase tracking-wider block mb-1.5">核心科技产业标的</span>
-          <div class="flex flex-wrap gap-2">
+          <span class="text-xs font-black uppercase text-[#1a1a1a] dark:text-zinc-300 block mb-2">核心科技龙头标的</span>
+          <div class="flex flex-wrap gap-2.5">
             <a
               href="https://xueqiu.com/S/NVDA"
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-[#5e6ad2]"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] bg-white dark:bg-[#2b2b30] text-xs font-black text-[#1a1a1a] dark:text-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_rgba(26,26,26,1)] active:shadow-none transition-all duration-100"
             >
               <span>英伟达 NVDA (雪球)</span>
-              <ExternalLink class="w-3 h-3 text-zinc-400" />
+              <ExternalLink class="w-3.5 h-3.5 stroke-[2.5]" />
             </a>
             <a
               href="https://xueqiu.com/S/MU"
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-[#5e6ad2]"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] bg-white dark:bg-[#2b2b30] text-xs font-black text-[#1a1a1a] dark:text-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_rgba(26,26,26,1)] active:shadow-none transition-all duration-100"
             >
               <span>美光科技 MU (雪球)</span>
-              <ExternalLink class="w-3 h-3 text-zinc-400" />
+              <ExternalLink class="w-3.5 h-3.5 stroke-[2.5]" />
             </a>
             <a
               href="https://xueqiu.com/S/SOXX"
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-[#5e6ad2]"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] bg-white dark:bg-[#2b2b30] text-xs font-black text-[#1a1a1a] dark:text-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_rgba(26,26,26,1)] active:shadow-none transition-all duration-100"
             >
               <span>半导体 ETF SOXX (雪球)</span>
-              <ExternalLink class="w-3 h-3 text-zinc-400" />
+              <ExternalLink class="w-3.5 h-3.5 stroke-[2.5]" />
             </a>
             <a
               href="https://xueqiu.com/S/TSLA"
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-[#5e6ad2]"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] bg-white dark:bg-[#2b2b30] text-xs font-black text-[#1a1a1a] dark:text-white hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_rgba(26,26,26,1)] active:shadow-none transition-all duration-100"
             >
               <span>特斯拉 TSLA (雪球)</span>
-              <ExternalLink class="w-3 h-3 text-zinc-400" />
+              <ExternalLink class="w-3.5 h-3.5 stroke-[2.5]" />
             </a>
           </div>
         </div>
@@ -318,14 +316,14 @@
     </div>
 
     <!-- Card 5: 关于与免责声明 -->
-    <div class="rounded-lg border border-zinc-200/80 dark:border-white/10 bg-white dark:bg-white/[0.03] p-3.5 md:p-5 transition-colors duration-150">
-      <h3 class="font-sans font-semibold tracking-tight text-sm md:text-base text-zinc-900 dark:text-white mb-1.5">
-        关于与免责声明
+    <div class="rounded-lg border-4 border-[#1a1a1a] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] md:shadow-[6px_6px_0px_0px_rgba(26,26,26,1)] bg-[#fffef0] dark:bg-[#202024] p-4 md:p-6 transition-all duration-100">
+      <h3 class="font-black uppercase tracking-wide text-base md:text-lg text-[#1a1a1a] dark:text-white mb-2">
+        📖 关于与设计说明
       </h3>
-      <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-        本项目遵循 Linear 极简设计规范，行情覆盖全球宏观经济、美股核心产业链、日韩亚洲综指与核心产业、有色金属及 AI 算力与硬件全链路价格。<br/>
-        <span class="text-zinc-400 dark:text-zinc-500 mt-2 block">
-          免责声明：本程序展示的公开查询数据，仅供参考，不构成任何投资建议。
+      <p class="text-xs text-[#4a4a4a] dark:text-zinc-300 font-bold leading-relaxed">
+        本项目遵循 <span class="text-[#ef4444] font-black">Comic Style (漫画风格)</span> 设计规范，行情全面接入开源项目 [MaHuisir/GCC: 魔方市场] 官方生产环境 API 矩阵，覆盖全球宏观经济、美股核心板块、日韩核心产业、有色金属及 AI 全链路价格。<br/>
+        <span class="text-[#4a4a4a] dark:text-zinc-400 mt-2 block font-black">
+          ※ 免责声明：本程序展示的公开查询数据，仅供参考，不构成任何投资建议。※
         </span>
       </p>
     </div>

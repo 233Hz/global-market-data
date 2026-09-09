@@ -1,9 +1,9 @@
 <template>
-  <div class="space-y-3.5 md:space-y-4">
+  <div class="space-y-4 md:space-y-5">
     <!-- Row 1 on PC: Korea & Japan side-by-side -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3.5 md:gap-4">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5">
       <!-- Korea Column -->
-      <div class="space-y-3.5 md:space-y-4">
+      <div class="space-y-4 md:space-y-5">
         <MarketCard
           v-if="krComposite"
           :title="krComposite.title"
@@ -21,7 +21,7 @@
       </div>
 
       <!-- Japan Column -->
-      <div class="space-y-3.5 md:space-y-4">
+      <div class="space-y-4 md:space-y-5">
         <MarketCard
           v-if="jpComposite"
           :title="jpComposite.title"
@@ -38,7 +38,7 @@
     </div>
 
     <!-- Row 2 on PC: Asia Composite & Forex side-by-side -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3.5 md:gap-4">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5">
       <MarketCard
         v-if="asiaComposite"
         :title="asiaComposite.title"
@@ -53,10 +53,10 @@
       />
     </div>
 
-    <!-- Bottom Disclaimer -->
-    <div class="py-2 text-center">
-      <p class="text-[11px] text-zinc-500 dark:text-zinc-500 font-sans tracking-tight">
-        本程序展示的公开查询数据，仅供参考，不构成任何投资建议
+    <!-- Bottom Disclaimer (Comic Style) -->
+    <div class="py-3 text-center">
+      <p class="text-xs text-[#4a4a4a] dark:text-zinc-400 font-black uppercase tracking-wider">
+        ※ 本程序展示公开查询数据，仅供参考，不构成任何投资建议 ※
       </p>
     </div>
   </div>

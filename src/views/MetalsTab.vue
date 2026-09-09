@@ -1,7 +1,7 @@
 <template>
-  <div class="space-y-3.5 md:space-y-4">
+  <div class="space-y-4 md:space-y-5">
     <!-- On PC: 3 columns side-by-side (Gold/Silver, Industrial, Minor Metals) -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-3.5 md:gap-4">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-5">
       <MarketCard
         v-if="goldSilver"
         :title="goldSilver.title"
@@ -26,10 +26,10 @@
       />
     </div>
 
-    <!-- Bottom Disclaimer -->
-    <div class="py-2 text-center">
-      <p class="text-[11px] text-zinc-500 dark:text-zinc-500 font-sans tracking-tight">
-        本程序展示的公开查询数据，仅供参考，不构成任何投资建议
+    <!-- Bottom Disclaimer (Comic Style) -->
+    <div class="py-3 text-center">
+      <p class="text-xs text-[#4a4a4a] dark:text-zinc-400 font-black uppercase tracking-wider">
+        ※ 本程序展示公开查询数据，仅供参考，不构成任何投资建议 ※
       </p>
     </div>
   </div>
