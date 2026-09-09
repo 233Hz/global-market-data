@@ -168,35 +168,35 @@ export function parseGccPercent(val?: string | number): number | undefined {
   return isNaN(num) ? undefined : num
 }
 
-export function formatPrice(p?: string | number): string | undefined {
+export function formatPrice(p?: string | number, isForex = false): string | undefined {
   if (p === undefined || p === null || p === '') return undefined
   if (p === '--') return '--'
-  if (typeof p === 'string') {
-    const trimmed = p.trim()
-    if (!isNaN(parseFloat(trimmed))) return trimmed
+  const num = typeof p === 'number' ? p : parseFloat(String(p).trim())
+  if (isNaN(num)) return String(p)
+  if (isForex) {
+    return num.toFixed(4)
   }
-  const num = typeof p === 'number' ? p : parseFloat(String(p))
-  return isNaN(num) ? undefined : num.toString()
+  return num.toFixed(2)
 }
 
 /**
  * 将 QuoteItem 映射为完整的 MarketItem，保留所有返回指标
  */
-function mapQuoteToMarketItem(item: QuoteItem, defaultIcon?: string, defaultUnit?: string): MarketItem {
+function mapQuoteToMarketItem(item: QuoteItem, defaultIcon?: string, defaultUnit?: string, isForex = false): MarketItem {
   return {
     id: item.code || item.name || '',
     name: item.name || '',
     subtitle: item.subtitle || item.desc,
     symbol: item.symbol || (item.code ? item.code.replace(/^(gb_|int_|rt_hk|sh|sz)/, '').toUpperCase() : undefined),
     icon: item.icon || defaultIcon,
-    price: formatPrice(item.price),
+    price: formatPrice(item.price, isForex),
     change: item.change !== undefined && item.change !== '' ? String(item.change) : undefined,
     changePercent: parseGccPercent(item.changePercent ?? item.change) ?? 0,
     changeDir: item.changeDir,
-    open: formatPrice(item.open),
-    high: formatPrice(item.high),
-    low: formatPrice(item.low),
-    prevClose: formatPrice(item.prevClose),
+    open: formatPrice(item.open, isForex),
+    high: formatPrice(item.high, isForex),
+    low: formatPrice(item.low, isForex),
+    prevClose: formatPrice(item.prevClose, isForex),
     time: item.time,
     unit: item.unit || defaultUnit,
     unavailable: item.unavailable
@@ -254,6 +254,7 @@ const BASELINE_DATA: Record<string, MarketSection[]> = {
       badge: '美股 · 待同步',
       badgeColor: 'normal',
       columns: 6,
+      isSector: true,
       items: [
         { id: 'gb_ixic_sec', name: '纳斯达克', icon: '📈', changePercent: 0.0 },
         { id: 'gb_dji_sec', name: '道琼斯', icon: '📈', changePercent: 0.0 },
@@ -400,6 +401,7 @@ const BASELINE_DATA: Record<string, MarketSection[]> = {
       badge: 'A股板块 · 待同步',
       badgeColor: 'normal',
       columns: 6,
+      isSector: true,
       items: [
         { id: 'cn_kc50etf', name: '科创50ETF', subtitle: '科创50ETF华夏', icon: '🌟', price: '0.00', changePercent: 0.0 },
         { id: 'cn_cyb', name: '创业板指', subtitle: '创业板ETF', icon: '🚀', price: '0.00', changePercent: 0.0 },
@@ -430,8 +432,8 @@ const BASELINE_DATA: Record<string, MarketSection[]> = {
   ]
 }
 
-const STORAGE_KEY = 'global_market_data_cache_v11'
-const LAST_FETCH_KEY = 'global_market_data_last_fetch_v11'
+const STORAGE_KEY = 'global_market_data_cache_v12'
+const LAST_FETCH_KEY = 'global_market_data_last_fetch_v12'
 
 export class MarketDataService {
   /**
@@ -547,6 +549,7 @@ export class MarketDataService {
               badge: `美股板块 · 共${usSectorItems.length}项`,
               badgeColor: usColor,
               columns: 6,
+              isSector: true,
               items: usSectorItems.length > 0 ? usSectorItems : BASELINE_DATA.global[3].items
             }
           ]
@@ -584,7 +587,7 @@ export class MarketDataService {
 
           // 3. 全球主要外汇牌价
           const forexItems: MarketItem[] = (forex?.forex || []).map(item =>
-            mapQuoteToMarketItem(item, '💱')
+            mapQuoteToMarketItem(item, '💱', undefined, true)
           )
 
           const sections: MarketSection[] = [
@@ -714,6 +717,7 @@ export class MarketDataService {
               badge: `A股板块 · 共${cnSectorItems.length}项`,
               badgeColor: cnColor,
               columns: 6,
+              isSector: true,
               items: cnSectorItems.length > 0 ? cnSectorItems : BASELINE_DATA.china[2].items
             }
           ]
@@ -736,7 +740,7 @@ export class MarketDataService {
     if (typeof localStorage === 'undefined') return
     localStorage.removeItem(STORAGE_KEY)
     localStorage.removeItem(LAST_FETCH_KEY)
-    for (let i = 1; i <= 11; i++) {
+    for (let i = 1; i <= 12; i++) {
       localStorage.removeItem(`global_market_data_cache_v${i}`)
       localStorage.removeItem(`global_market_data_last_fetch_v${i}`)
     }

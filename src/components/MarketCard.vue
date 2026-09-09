@@ -33,6 +33,7 @@
         v-for="item in items"
         :key="item.id"
         :item="item"
+        :is-sector="isSector"
       />
     </div>
   </div>
@@ -50,9 +51,11 @@ const props = withDefaults(
     badgeColor?: 'normal' | 'live' | 'closed'
     items: MarketItem[]
     columns?: 2 | 3 | 4 | 5 | 6
+    isSector?: boolean
   }>(),
   {
-    columns: 2
+    columns: 2,
+    isSector: false
   }
 )
 
