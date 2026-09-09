@@ -185,7 +185,139 @@
       </p>
     </div>
 
-    <!-- Card 4: 关于与免责声明 -->
+    <!-- Card 4: 权威财经网页实时对比 -->
+    <div class="rounded-lg border border-zinc-200/80 dark:border-white/10 bg-white dark:bg-white/[0.03] p-3.5 md:p-5 transition-colors duration-150">
+      <h3 class="font-sans font-semibold tracking-tight text-sm md:text-base text-zinc-900 dark:text-white mb-1">
+        权威财经网页实时对比
+      </h3>
+      <p class="text-xs text-zinc-500 dark:text-zinc-400 mb-3.5">
+        点击可在新标签页直接打开对应权威财经行情页面，对比走势图与即时点位。
+      </p>
+
+      <div class="space-y-3">
+        <!-- 宏观与大宗商品 -->
+        <div>
+          <span class="text-[11px] font-medium text-zinc-500 uppercase tracking-wider block mb-1.5">全球大宗商品与宏观</span>
+          <div class="flex flex-wrap gap-2">
+            <a
+              href="https://finance.sina.com.cn/futures/quotes/OIL.shtml"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-[#5e6ad2]"
+            >
+              <span>布伦特原油 (新浪财经)</span>
+              <ExternalLink class="w-3 h-3 text-zinc-400" />
+            </a>
+            <a
+              href="https://finance.sina.com.cn/futures/quotes/GC.shtml"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-[#5e6ad2]"
+            >
+              <span>COMEX黄金 (新浪财经)</span>
+              <ExternalLink class="w-3 h-3 text-zinc-400" />
+            </a>
+            <a
+              href="https://finance.sina.com.cn/futures/quotes/SI.shtml"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-[#5e6ad2]"
+            >
+              <span>COMEX白银 (新浪财经)</span>
+              <ExternalLink class="w-3 h-3 text-zinc-400" />
+            </a>
+            <a
+              href="https://xueqiu.com/S/TLT"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-[#5e6ad2]"
+            >
+              <span>美债长债 TLT (雪球)</span>
+              <ExternalLink class="w-3 h-3 text-zinc-400" />
+            </a>
+          </div>
+        </div>
+
+        <!-- 汇率牌价 -->
+        <div>
+          <span class="text-[11px] font-medium text-zinc-500 uppercase tracking-wider block mb-1.5">全球外汇牌价</span>
+          <div class="flex flex-wrap gap-2">
+            <a
+              href="https://finance.sina.com.cn/money/forex/hq/USDJPY.shtml"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-[#5e6ad2]"
+            >
+              <span>美元/日元 (新浪外汇)</span>
+              <ExternalLink class="w-3 h-3 text-zinc-400" />
+            </a>
+            <a
+              href="https://finance.sina.com.cn/money/forex/hq/CNYJPY.shtml"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-[#5e6ad2]"
+            >
+              <span>人民币/日元 (新浪外汇)</span>
+              <ExternalLink class="w-3 h-3 text-zinc-400" />
+            </a>
+            <a
+              href="https://finance.sina.com.cn/money/forex/hq/USDKRW.shtml"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-[#5e6ad2]"
+            >
+              <span>美元/韩元 (新浪外汇)</span>
+              <ExternalLink class="w-3 h-3 text-zinc-400" />
+            </a>
+          </div>
+        </div>
+
+        <!-- 科技与产业龙头 -->
+        <div>
+          <span class="text-[11px] font-medium text-zinc-500 uppercase tracking-wider block mb-1.5">核心科技产业标的</span>
+          <div class="flex flex-wrap gap-2">
+            <a
+              href="https://xueqiu.com/S/NVDA"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-[#5e6ad2]"
+            >
+              <span>英伟达 NVDA (雪球)</span>
+              <ExternalLink class="w-3 h-3 text-zinc-400" />
+            </a>
+            <a
+              href="https://xueqiu.com/S/MU"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-[#5e6ad2]"
+            >
+              <span>美光科技 MU (雪球)</span>
+              <ExternalLink class="w-3 h-3 text-zinc-400" />
+            </a>
+            <a
+              href="https://xueqiu.com/S/SOXX"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-[#5e6ad2]"
+            >
+              <span>半导体 ETF SOXX (雪球)</span>
+              <ExternalLink class="w-3 h-3 text-zinc-400" />
+            </a>
+            <a
+              href="https://xueqiu.com/S/TSLA"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/[0.02] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-[#5e6ad2]"
+            >
+              <span>特斯拉 TSLA (雪球)</span>
+              <ExternalLink class="w-3 h-3 text-zinc-400" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 5: 关于与免责声明 -->
     <div class="rounded-lg border border-zinc-200/80 dark:border-white/10 bg-white dark:bg-white/[0.03] p-3.5 md:p-5 transition-colors duration-150">
       <h3 class="font-sans font-semibold tracking-tight text-sm md:text-base text-zinc-900 dark:text-white mb-1.5">
         关于与免责声明
@@ -202,7 +334,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { RotateCw, Trash2, Moon, Sun } from 'lucide-vue-next'
+import { RotateCw, Trash2, Moon, Sun, ExternalLink } from 'lucide-vue-next'
 import { useMarket } from '../composables/useMarket'
 import { MarketDataService } from '../services/marketDataService'
 
