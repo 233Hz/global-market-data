@@ -1,23 +1,13 @@
 <template>
   <div class="space-y-4 md:space-y-5">
-    <!-- Macro Section: 4 columns on PC to keep it compact -->
     <MarketCard
-      v-if="macroSection"
-      :title="macroSection.title"
-      :badge="macroSection.badge"
-      :badge-color="macroSection.badgeColor"
-      :items="macroSection.items"
-      :columns="4"
-    />
-
-    <!-- Industry Section: 6 columns on PC so all 24 items fit in 4 rows -->
-    <MarketCard
-      v-if="industrySection"
-      :title="industrySection.title"
-      :badge="industrySection.badge"
-      :badge-color="industrySection.badgeColor"
-      :items="industrySection.items"
-      :columns="6"
+      v-for="section in sections"
+      :key="section.id"
+      :title="section.title"
+      :badge="section.badge"
+      :badge-color="section.badgeColor"
+      :items="section.items"
+      :columns="section.columns || 4"
     />
 
     <!-- Bottom Disclaimer (Comic Style) -->
@@ -36,11 +26,5 @@ import MarketCard from '../components/MarketCard.vue'
 
 const { marketData } = useMarket()
 
-const macroSection = computed(() => {
-  return (marketData.value.global || []).find(s => s.id === 'global-macro')
-})
-
-const industrySection = computed(() => {
-  return (marketData.value.global || []).find(s => s.id === 'global-industry')
-})
+const sections = computed(() => marketData.value.global || [])
 </script>

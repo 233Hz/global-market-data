@@ -15,6 +15,7 @@ export interface MarketSection {
   title: string
   badge?: string
   badgeColor?: 'normal' | 'live' | 'closed'
+  columns?: 2 | 3 | 4 | 6
   items: MarketItem[]
 }
 

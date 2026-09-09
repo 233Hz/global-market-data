@@ -1,21 +1,13 @@
 <template>
   <div class="space-y-4 md:space-y-5">
-    <!-- AI Products Price -->
     <MarketCard
-      v-if="aiProducts"
-      :title="aiProducts.title"
-      :badge="aiProducts.badge"
-      :badge-color="aiProducts.badgeColor"
-      :items="aiProducts.items"
-      :columns="2"
-    />
-
-    <!-- AI Hardware Price: 4 columns on PC so all 16 items fit in 4 rows -->
-    <MarketCard
-      v-if="aiHardware"
-      :title="aiHardware.title"
-      :items="aiHardware.items"
-      :columns="4"
+      v-for="section in sections"
+      :key="section.id"
+      :title="section.title"
+      :badge="section.badge"
+      :badge-color="section.badgeColor"
+      :items="section.items"
+      :columns="section.columns || 4"
     />
 
     <!-- Bottom Disclaimer (Comic Style) -->
@@ -34,6 +26,5 @@ import MarketCard from '../components/MarketCard.vue'
 
 const { marketData } = useMarket()
 
-const aiProducts = computed(() => (marketData.value.ai || []).find(s => s.id === 'ai-products'))
-const aiHardware = computed(() => (marketData.value.ai || []).find(s => s.id === 'ai-hardware'))
+const sections = computed(() => marketData.value.ai || [])
 </script>

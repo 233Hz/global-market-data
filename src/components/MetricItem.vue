@@ -2,10 +2,14 @@
   <div
     class="rounded-lg border-2 border-[#1a1a1a] shadow-[3px_3px_0px_0px_rgba(26,26,26,1)] bg-white dark:bg-[#28282d] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none transition-all duration-100 p-2 sm:p-2.5 md:p-3 flex flex-col justify-between group"
   >
-    <!-- Case 1: Item with distinct Price (e.g. Macro commodities, Forex) -->
-    <template v-if="item.price !== undefined">
+    <!-- Case 1: Item with distinct Price (e.g. Macro commodities, Forex, Stocks, Indices, Metals) -->
+    <template v-if="item.price !== undefined && item.price !== ''">
       <div class="flex items-center justify-between text-xs font-black uppercase tracking-tight mb-1.5 gap-1">
-        <span class="whitespace-nowrap text-[#1a1a1a] dark:text-zinc-200 font-black">{{ item.name }}</span>
+        <div class="flex items-center gap-1 min-w-0">
+          <span v-if="item.icon" class="text-xs select-none flex-shrink-0 leading-none">{{ item.icon }}</span>
+          <span class="whitespace-nowrap text-[#1a1a1a] dark:text-zinc-200 font-black">{{ item.name }}</span>
+          <span v-if="item.symbol" class="text-[10px] text-[#71717a] dark:text-zinc-400 font-mono font-bold">{{ item.symbol }}</span>
+        </div>
         <span :class="['px-1.5 py-0.5 rounded font-mono font-black text-[11px] whitespace-nowrap flex-shrink-0 tracking-tight', trend.badgeClass]">
           {{ trend.formattedPercent }}
         </span>

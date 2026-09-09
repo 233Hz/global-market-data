@@ -1,30 +1,14 @@
 <template>
   <div class="space-y-4 md:space-y-5">
-    <!-- On PC: 3 columns side-by-side (Gold/Silver, Industrial, Minor Metals) -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-5">
-      <MarketCard
-        v-if="goldSilver"
-        :title="goldSilver.title"
-        :badge="goldSilver.badge"
-        :badge-color="goldSilver.badgeColor"
-        :items="goldSilver.items"
-        :columns="2"
-      />
-
-      <MarketCard
-        v-if="industrialMetals"
-        :title="industrialMetals.title"
-        :items="industrialMetals.items"
-        :columns="2"
-      />
-
-      <MarketCard
-        v-if="otherMetals"
-        :title="otherMetals.title"
-        :items="otherMetals.items"
-        :columns="2"
-      />
-    </div>
+    <MarketCard
+      v-for="section in sections"
+      :key="section.id"
+      :title="section.title"
+      :badge="section.badge"
+      :badge-color="section.badgeColor"
+      :items="section.items"
+      :columns="section.columns || 4"
+    />
 
     <!-- Bottom Disclaimer (Comic Style) -->
     <div class="py-3 text-center">
@@ -42,7 +26,5 @@ import MarketCard from '../components/MarketCard.vue'
 
 const { marketData } = useMarket()
 
-const goldSilver = computed(() => (marketData.value.metals || []).find(s => s.id === 'gold-silver'))
-const industrialMetals = computed(() => (marketData.value.metals || []).find(s => s.id === 'industrial-metals'))
-const otherMetals = computed(() => (marketData.value.metals || []).find(s => s.id === 'other-metals'))
+const sections = computed(() => marketData.value.metals || [])
 </script>
